@@ -2,7 +2,7 @@
 
 AbsoluteManageExport is an AutoPkg Processor for Absolute Manage.
 
-### Configure Absolute Manage
+## Configure Absolute Manage
 
 Enable External SD Package Upload. Run this in the same user contex that you will be running Absolute Manage Admin.
 
@@ -24,12 +24,12 @@ Double check there is a folder entry for your server - username in:
 
 You should be all set to run your Absolute recipes.
 
-### AutoPkg Shared Processor
+## AutoPkg Shared Processor
 
 As of AutoPkg 0.4.0 you can use this processor as a shared processor. See this wiki for more information.
 https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
-### Expected Behavior
+## Expected Behavior
 
 AbsoluteManageExport currently only performs a basic check to see if an executable with the same name is already in the SD Package database. If so, no upload takes place. If not, a new Software Package and Payload are created.
 
