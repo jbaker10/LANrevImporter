@@ -31,7 +31,18 @@ https://github.com/tburgin/AbsoluteManageExport/releases/latest
 
 ## AutoPkg Shared Processor
 
-As of AutoPkg 0.4.0 you can use this processor as a shared processor. See this wiki for more information.
+As of AutoPkg 0.4.0 you can use this processor as a shared processor.
+
+Add the processor repo 
+```bash
+autopkg repo-add https://github.com/tburgin/AbsoluteManageExport
+```
+Then use this as the processor in your recipes
+```bash
+com.github.tburgin.AbsoluteManageExport/AbsoluteManageExport
+```
+
+See this wiki for more information on shared processor.
 https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
 ## Expected Behavior
