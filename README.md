@@ -55,4 +55,4 @@ Receipt written to /Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Abso
 
 ## Sources
 
-The `get_pref` method I borred from [munki](https://github.com/munki/munki)
+The `get_pref` method I borrowed from [munki](https://github.com/munki/munki)
