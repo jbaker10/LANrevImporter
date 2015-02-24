@@ -5,7 +5,7 @@
 	<key>Description</key>
     <string>Creates an Absolute Manage package (.amsdpackages), imports it into the Absolute Manage Admin console and uploads it to the Absolute Manage Server.</string>
     <key>Identifier</key>
-	<string>com.github.tburgin.Absolute.AdobeFlashPlayer</string>
+	<string>com.github.tburgin.AbsoluteManageExport.AdobeFlashPlayer</string>
 	<key>Input</key>
 	<dict>
 		<key>NAME</key>
