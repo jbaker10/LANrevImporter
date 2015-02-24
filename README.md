@@ -19,7 +19,7 @@ Launch the Absolute Manage Admin Application. Sign into the correct server with 
 Double check there is a folder entry for your server - username in:
 
 ```bash
-~/Library/Application Support/LANrev\ Admin/Database/
+~/Library/Application Support/LANrev Admin/Database/
 ```
 
 You should be all set to run your Absolute recipes.
