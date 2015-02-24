@@ -141,8 +141,8 @@ class AbsoluteManageExport(Processor):
                 self.output("[+] Failed to create [%s] Please check your permissions and try again. Error [%s]"  (dest_dir, err))
 
         try:
-            subprocess.check_output([self.appleSingleTool, "encode", "-s", source_dir, "-t", dest_dir + "/Payloads/" + self.unique_id])
-            self.output("[+] Exported [%s] to ./" % source_dir)
+            subprocess.check_output([self.appleSingleTool, "encode", "-s", source_dir, "-t", dest_dir + "/Payloads/" + self.unique_id, "-p", "-x", "-z", "3"])
+            self.output("[+] Exported [%s] to [%s]" % (source_dir, dest_dir))
 
         except (subprocess.CalledProcessError, OSError), err:
             raise err
