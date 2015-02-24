@@ -22,7 +22,12 @@ Double check there is a folder entry for your server - username in:
 ~/Library/Application Support/LANrev\ Admin/Database/
 ```
 
-You should be all set to run your Absolute recipe.
+You should be all set to run your Absolute recipes.
+
+### AutoPkg Shared Processor
+
+As of AutoPkg 0.4.0 you can use this processor as a shared processor. See this wiki for more information.
+https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
 ### Expected Behavior
 
