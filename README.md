@@ -24,6 +24,11 @@ Double check there is a folder entry for your server - username in:
 
 You should be all set to run your Absolute recipes.
 
+## Installing the Processor
+
+You can install this processor locally on the system by running this installer.
+https://github.com/tburgin/AbsoluteManageExport/releases/latest
+
 ## AutoPkg Shared Processor
 
 As of AutoPkg 0.4.0 you can use this processor as a shared processor. See this wiki for more information.
