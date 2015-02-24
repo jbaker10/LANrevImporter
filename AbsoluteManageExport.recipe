@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Description</key>
+    <string>This is an example of a recipe that can be used by another
+recipe outside of this directory or repo, to refer to
+a processor in this directory.
+
+Instead of setting the 'Processor' key to a processor name
+only, we separate the recipe identifier and the processor
+name with a slash:
+    </string>
+    <key>Identifier</key>
+    <string>com.github.tburgin.AbsoluteManageExport</string>
+    <key>Input</key>
+    <dict/>
+    <key>MinimumVersion</key>
+    <string>0.4.0</string>
+    <key>Process</key>
+    <dict/>
+</dict>
+</plist>
