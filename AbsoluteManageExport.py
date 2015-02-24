@@ -14,14 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os,   \
+       uuid,  \
+       shutil, \
+       hashlib, \
+       datetime, \
+       sqlite3,   \
+       plistlib,   \
+       subprocess
 
-import os
-import shutil
-import subprocess
-import uuid
-import datetime
-import plistlib
 
+from Foundation import  NSArray,     \
+                        NSDictionary, \
+                        NSUserName,    \
+                        NSHomeDirectory
+
+from CoreFoundation import CFPreferencesCopyAppValue
 from autopkglib import Processor, ProcessorError
 
 __all__ = ["AbsoluteManageExport"]
@@ -59,6 +67,63 @@ class AbsoluteManageExport(Processor):
     unique_id_sd = str(uuid.uuid4()).upper()
     sdpackages_template = {'SDPackageExportVersion': 1, 'SDPayloadFolder': 'Payloads', 'SDPackageList': [{'IsNewEntry': False, 'OptionalData': [], 'RequiresLoggedInUser': False, 'InstallTimeEnd': [], 'AllowOnDemandInstallation': False, 'InstallTime': [], 'AutoStartInstallationMinutes': [], 'SoftwarePatchIdentifier': [], 'RestartNotificationNagTime': [], 'PlatformArchitecture': 131071, 'ExecutableSize': 0, 'ResetSeed': 1, 'Priority': 2, 'WU_LanguageCode': [], 'WU_SuperseededByPackageID': [], 'WU_IsUninstallable': [], 'WU_LastDeploymentChangeTime': [], 'IsMacOSPatch': False, 'UploadStatus': [], 'id': 0, 'RequiresAdminPrivileges': False, 'InstallationContextSelector': 2, 'SoftwareSpecNeedToExist': True, 'MinimumOS': 0, 'Description': '', 'AllowOnDemandRemoval': False, 'RetrySeed': 1, 'MaximumOS': 0, 'SoftwarePatchStatus': 0, 'IsMetaPackage': False, 'SoftwarePatchSupportedOS': [], 'ScanAllVolumes': False, 'DontInstallOnSlowNetwork': False, 'ShowRestartNotification': False, 'SelfHealingOptions': [], 'AllowDeferMinutes': [], 'last_modified': '', 'SoftwarePatchRecommended': [], 'UserContext': '', 'EnableSelfHealing': False, 'InstallationDateTime': [], 'AllowToPostponeRestart': False, 'PayloadExecutableUUID': '', 'WU_IsBeta': [], 'OSPlatform': 1, 'RequiresRestart': 0, 'Name': '', 'FindCriteria': {'Operator': 'AND', 'Value': [{'Operator': 'AND', 'Value': [{'Operator': '=', 'Units': 'Minutes', 'Property': 'Name', 'Value2': '', 'Value': ''}]}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsPackage'}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsApplication'}]}, 'SDPayloadList': [{'IsNewEntry': 0, 'OptionalData': [], 'SelectedObjectIsExecutable': True, 'Description': '', 'ExecutableName': '', 'ExecutableSize': 0, 'TransferExecutableFolder': False, 'id': 0, 'SourceFilePath': '', 'last_modified': '', 'PayloadOptions': 0, 'UniqueID': '', 'IsVisible': True, 'UploadStatus': 2, 'MD5Checksum': '', 'Name': ''}], 'DisplayProgressDuringInstall': False, 'ContinueInstallationAfterFailure': False, 'UserInteraction': 1, 'WarnAboutSlowNetwork': False, 'InstallTimeOptions': 1, 'WU_IsMandatory': [], 'DownloadPackagesBeforeShowingToUser': False, 'PackageType': 1, 'WU_Deadline': [], 'SoftwarePatchVersion': [], 'WU_DeploymentAction': [], 'TargetInstallationVolume': '', 'KeepPackageFileAfterInstallation': False, 'MD5Checksum': [], 'TransferExecutableFolder': [], 'WU_SuperseededByPackageName': [], 'StagingServerOption': 1, 'ExecutableOptions': '', 'WU_UninstallationBehaviorImpact': [], 'ExecutableName': [], 'ExecutableServerVolume': [], 'DontInstallIfUserIsLoggedIn': False, 'SourceFilePath': [], 'UserContextPassword': '', 'AvailabilityDate': datetime.datetime.today(), 'WU_InstallationBehaviorImpact': [], 'PostNotificationAutoClose': [], 'UniqueID': '', 'UseSoftwareSpec': False, 'ExecutablePath': [], 'IsWindowsPatch': False}]}
     open_exe = "/usr/bin/open"
+    BUNDLE_ID = "com.poleposition-sw.lanrev_admin"
+
+    
+    def get_pref(self, key, domain=BUNDLE_ID):
+        """Return a single pref value (or None) for a domain."""
+        value = CFPreferencesCopyAppValue(key, domain) or None
+        # Casting NSArrays and NSDictionaries to native Python types.
+        # This a workaround for 10.6, where PyObjC doesn't seem to
+        # support as many common operations such as list concatenation
+        # between Python and ObjC objects.
+        if isinstance(value, NSArray):
+            value = list(value)
+        elif isinstance(value, NSDictionary):
+            value = dict(value)
+        return value
+    
+    
+    def dict_factory(self, cursor, row):
+        d = {}
+        for idx, col in enumerate(cursor.description):
+            d[col[0]] = row[idx]
+        return d
+    
+   
+    def md5_for_file(self, path, block_size=256*128):
+        md5 = hashlib.md5()
+        with open(path,'rb') as f: 
+            for chunk in iter(lambda: f.read(block_size), b''): 
+                 md5.update(chunk)
+        return md5.hexdigest()
+
+    def check_sd_payload(self, exe_name):
+        self.output("[+] Checking if [%s] exists in SDCaches.db" % self.sdpackages_template['SDPackageList'][0]['Name'])
+        
+        am_server = self.get_pref("ServerAddress")
+        database_path = NSHomeDirectory() + "/Library/Application Support/LANrev Admin/Database/"
+        servers_list = os.listdir(database_path)
+        
+        for e in servers_list:
+            if am_server in e:
+                database_path = database_path + e + "/SDCaches.db"
+                break
+
+        conn = sqlite3.connect(database_path)
+        conn.row_factory = self.dict_factory
+        c = conn.cursor()
+        sd_packages = c.execute("select * from 'sd_payloads_latest'").fetchall()
+        c.close()
+        conn.close()
+
+        for e in sd_packages:
+            if e["ExecutableName"] == exe_name:
+                self.output("[+] [%s] already exists in Absolute Manage Server Center" % exe_name)
+                return True
+
+        return False
+
 
     def export_amsdpackages(self, source_dir, dest_dir, am_options, import_pkg):
 
@@ -77,6 +142,7 @@ class AbsoluteManageExport(Processor):
 
         try:
             subprocess.check_output([self.appleSingleTool, "encode", "-s", source_dir, "-t", dest_dir + "/Payloads/" + self.unique_id])
+            self.output("[+] Exported [%s] to ./" % source_dir)
 
         except (subprocess.CalledProcessError, OSError), err:
             raise err
@@ -91,7 +157,7 @@ class AbsoluteManageExport(Processor):
 
         try:
             executable_size = subprocess.check_output(["/usr/bin/stat", "-f%z", source_dir])
-            md5_checksum = subprocess.check_output(["/sbin/md5", dest_dir + "/Payloads/" + self.unique_id]).split("=")[-1].strip(" ")
+            md5_checksum = self.md5_for_file(dest_dir + "/Payloads/" + self.unique_id)
 
         except (subprocess.CalledProcessError, OSError), err:
             raise err
@@ -111,13 +177,16 @@ class AbsoluteManageExport(Processor):
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['last_modified'] = ""
 
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
-        if import_pkg:
+
+        if import_pkg and not self.check_sd_payload(source_dir.split("/")[-1]):
+            self.output("[+] Attemting to upload [%s] to Absolute Manage Server Center" % dest_dir)
             try:
                 subprocess.check_output([self.open_exe, "lanrevadmin://importsoftwarepackage?packagepath=" + dest_dir])
                 subprocess.check_output([self.open_exe, "lanrevadmin://commitsoftwarepackagechanges"])
             except (subprocess.CalledProcessError, OSError), err:
                 raise err
-
+        else:
+            self.output("[+] Nothing uploaded to Absolute Manage")
 
 
     def main(self):
@@ -128,8 +197,6 @@ class AbsoluteManageExport(Processor):
 
         self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, import_pkg)
 
-        self.output("[+] Exported [%s] to ./"
-            % source_payload)
 
 if __name__ == '__main__':
     processor = AbsoluteManageExport()
