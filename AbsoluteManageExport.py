@@ -63,8 +63,6 @@ class AbsoluteManageExport(Processor):
 
     output_variables = {}
     appleSingleTool = "/Library/Application Support/LANrev Agent/LANrev Agent.app/Contents/MacOS/AppleSingleTool"
-    unique_id = str(uuid.uuid4()).upper()
-    unique_id_sd = str(uuid.uuid4()).upper()
     sdpackages_template = {'SDPackageExportVersion': 1, 'SDPayloadFolder': 'Payloads', 'SDPackageList': [{'IsNewEntry': False, 'OptionalData': [], 'RequiresLoggedInUser': False, 'InstallTimeEnd': [], 'AllowOnDemandInstallation': False, 'InstallTime': [], 'AutoStartInstallationMinutes': [], 'SoftwarePatchIdentifier': [], 'RestartNotificationNagTime': [], 'PlatformArchitecture': 131071, 'ExecutableSize': 0, 'ResetSeed': 1, 'Priority': 2, 'WU_LanguageCode': [], 'WU_SuperseededByPackageID': [], 'WU_IsUninstallable': [], 'WU_LastDeploymentChangeTime': [], 'IsMacOSPatch': False, 'UploadStatus': [], 'id': 0, 'RequiresAdminPrivileges': False, 'InstallationContextSelector': 2, 'SoftwareSpecNeedToExist': True, 'MinimumOS': 0, 'Description': '', 'AllowOnDemandRemoval': False, 'RetrySeed': 1, 'MaximumOS': 0, 'SoftwarePatchStatus': 0, 'IsMetaPackage': False, 'SoftwarePatchSupportedOS': [], 'ScanAllVolumes': False, 'DontInstallOnSlowNetwork': False, 'ShowRestartNotification': False, 'SelfHealingOptions': [], 'AllowDeferMinutes': [], 'last_modified': '', 'SoftwarePatchRecommended': [], 'UserContext': '', 'EnableSelfHealing': False, 'InstallationDateTime': [], 'AllowToPostponeRestart': False, 'PayloadExecutableUUID': '', 'WU_IsBeta': [], 'OSPlatform': 1, 'RequiresRestart': 0, 'Name': '', 'FindCriteria': {'Operator': 'AND', 'Value': [{'Operator': 'AND', 'Value': [{'Operator': '=', 'Units': 'Minutes', 'Property': 'Name', 'Value2': '', 'Value': ''}]}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsPackage'}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsApplication'}]}, 'SDPayloadList': [{'IsNewEntry': 0, 'OptionalData': [], 'SelectedObjectIsExecutable': True, 'Description': '', 'ExecutableName': '', 'ExecutableSize': 0, 'TransferExecutableFolder': False, 'id': 0, 'SourceFilePath': '', 'last_modified': '', 'PayloadOptions': 0, 'UniqueID': '', 'IsVisible': True, 'UploadStatus': 2, 'MD5Checksum': '', 'Name': ''}], 'DisplayProgressDuringInstall': False, 'ContinueInstallationAfterFailure': False, 'UserInteraction': 1, 'WarnAboutSlowNetwork': False, 'InstallTimeOptions': 1, 'WU_IsMandatory': [], 'DownloadPackagesBeforeShowingToUser': False, 'PackageType': 1, 'WU_Deadline': [], 'SoftwarePatchVersion': [], 'WU_DeploymentAction': [], 'TargetInstallationVolume': '', 'KeepPackageFileAfterInstallation': False, 'MD5Checksum': [], 'TransferExecutableFolder': [], 'WU_SuperseededByPackageName': [], 'StagingServerOption': 1, 'ExecutableOptions': '', 'WU_UninstallationBehaviorImpact': [], 'ExecutableName': [], 'ExecutableServerVolume': [], 'DontInstallIfUserIsLoggedIn': False, 'SourceFilePath': [], 'UserContextPassword': '', 'AvailabilityDate': datetime.datetime.today(), 'WU_InstallationBehaviorImpact': [], 'PostNotificationAutoClose': [], 'UniqueID': '', 'UseSoftwareSpec': False, 'ExecutablePath': [], 'IsWindowsPatch': False}]}
     open_exe = "/usr/bin/open"
     BUNDLE_ID = "com.poleposition-sw.lanrev_admin"
@@ -126,6 +124,11 @@ class AbsoluteManageExport(Processor):
 
 
     def export_amsdpackages(self, source_dir, dest_dir, am_options, import_pkg):
+        
+        unique_id = str(uuid.uuid4()).upper()
+        unique_id_sd = str(uuid.uuid4()).upper()
+        self.output("[+] unique_id [%s]" % unique_id)
+        self.output("[+] unique_id_sd [%s]" % unique_id_sd)
 
         if os.path.exists(dest_dir):
             shutil.rmtree(dest_dir)
@@ -141,7 +144,7 @@ class AbsoluteManageExport(Processor):
                 self.output("[+] Failed to create [%s] Please check your permissions and try again. Error [%s]"  (dest_dir, err))
 
         try:
-            subprocess.check_output([self.appleSingleTool, "encode", "-s", source_dir, "-t", dest_dir + "/Payloads/" + self.unique_id, "-p", "-x", "-z", "3"])
+            subprocess.check_output([self.appleSingleTool, "encode", "-s", source_dir, "-t", dest_dir + "/Payloads/" + unique_id, "-p", "-x", "-z", "3"])
             self.output("[+] Exported [%s] to [%s]" % (source_dir, dest_dir))
 
         except (subprocess.CalledProcessError, OSError), err:
@@ -157,7 +160,7 @@ class AbsoluteManageExport(Processor):
 
         try:
             executable_size = subprocess.check_output(["/usr/bin/stat", "-f%z", source_dir])
-            md5_checksum = self.md5_for_file(dest_dir + "/Payloads/" + self.unique_id)
+            md5_checksum = self.md5_for_file(dest_dir + "/Payloads/" + unique_id)
 
         except (subprocess.CalledProcessError, OSError), err:
             raise err
@@ -165,15 +168,15 @@ class AbsoluteManageExport(Processor):
         self.sdpackages_template = plistlib.readPlist(dest_dir + "/SDPackages.ampkgprops")
 
         self.sdpackages_template['SDPackageList'][0]['Name'] = source_dir.split("/")[-1].strip(".pkg")
-        self.sdpackages_template['SDPackageList'][0]['PayloadExecutableUUID'] = self.unique_id
-        self.sdpackages_template['SDPackageList'][0]['UniqueID'] = self.unique_id_sd
+        self.sdpackages_template['SDPackageList'][0]['PayloadExecutableUUID'] = unique_id
+        self.sdpackages_template['SDPackageList'][0]['UniqueID'] = unique_id_sd
         self.sdpackages_template['SDPackageList'][0]['ExecutableSize'] = int(executable_size)
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['ExecutableName'] = source_dir.split("/")[-1]
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['ExecutableSize'] = int(executable_size)
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['MD5Checksum'] = md5_checksum
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['Name'] = source_dir.split("/")[-1].strip(".pkg")
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['SourceFilePath'] = source_dir
-        self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['UniqueID'] = self.unique_id
+        self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['UniqueID'] = unique_id
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['last_modified'] = ""
 
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
