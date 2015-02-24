@@ -52,3 +52,7 @@ AbsoluteManageExport: [+] [AdobeFlashPlayer-16.0.0.305.pkg] already exists in Ab
 AbsoluteManageExport: [+] Nothing uploaded to Absolute Manage
 Receipt written to /Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/receipts/AdobeFlashPlayer-receipt-20150223-232413.plist
 ```
+
+## Sources
+
+The `get_pref` method I borred from [munki](https://github.com/munki/munki)
