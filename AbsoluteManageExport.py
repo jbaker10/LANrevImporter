@@ -131,10 +131,13 @@ class AbsoluteManageExport(Processor):
         self.output("[+] unique_id_sd [%s]" % unique_id_sd)
 
         if os.path.exists(dest_dir):
+            self.output("[+] dest_dir [%s] exists. Removing it." % dest_dir)
             shutil.rmtree(dest_dir)
 
         try:
+            self.output("[+] Creating [%s]" % dest_dir)
             os.mkdir(dest_dir)
+            self.output("[+] Creating [%s/Payloads]" % dest_dir)
             os.mkdir(dest_dir + "/Payloads")
 
         except OSError, err:
