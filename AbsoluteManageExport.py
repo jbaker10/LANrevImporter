@@ -151,6 +151,7 @@ class AbsoluteManageExport(Processor):
             self.output("[+] Exported [%s] to [%s]" % (source_dir, dest_dir))
 
         except (subprocess.CalledProcessError, OSError), err:
+            self.output("[!] Please make sure [%s] exists" %  appleSingleTool)
             raise err
 
         try:
