@@ -55,7 +55,11 @@ class AbsoluteManageExport(Processor):
             'required': False,
         },
         'sd_name_prefix': {
-            'description': 'Define a prefix to follow naming conventions',
+            'description': 'Define a prefix for the package to follow naming conventions',
+            'required': False,
+        },
+        'payload_name_prefix': {
+            'description': 'Define a prefix for the payload to follow naming conventions',
             'required': False,
         },
         'import_abman_to_servercenter': {
@@ -127,7 +131,7 @@ class AbsoluteManageExport(Processor):
         return False
 
 
-    def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix, import_pkg):
+    def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix, payload_name_prefix, import_pkg):
         
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
@@ -136,6 +140,9 @@ class AbsoluteManageExport(Processor):
 
         if sd_name_prefix == None:
             sd_name_prefix = ""
+
+        if payload_name_prefix == None:
+            payload_name_prefix = ""
 
         if os.path.exists(dest_dir):
             self.output("[+] dest_dir [%s] exists. Removing it." % dest_dir)
@@ -185,7 +192,7 @@ class AbsoluteManageExport(Processor):
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['ExecutableName'] = source_dir.split("/")[-1]
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['ExecutableSize'] = int(executable_size)
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['MD5Checksum'] = md5_checksum
-        self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['Name'] = sd_name_prefix + source_dir.split("/")[-1].strip(".pkg")
+        self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['Name'] = payload_name_prefix + source_dir.split("/")[-1].strip(".pkg")
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['SourceFilePath'] = source_dir
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['UniqueID'] = unique_id
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['last_modified'] = ""
@@ -208,9 +215,10 @@ class AbsoluteManageExport(Processor):
         dest_payload = self.env.get('dest_payload_path')
         sdpackages_ampkgprops = self.env.get('sdpackages_ampkgprops_path')
         sd_name_prefix = self.env.get('sd_name_prefix')
+        payload_name_prefix = self.env.get('payload_name_prefix')
         import_pkg = self.env.get('import_abman_to_servercenter')
 
-        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, import_pkg)
+        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, import_pkg)
 
 
 if __name__ == '__main__':
