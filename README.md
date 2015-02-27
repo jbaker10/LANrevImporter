@@ -45,6 +45,30 @@ com.github.tburgin.AbsoluteManageExport/AbsoluteManageExport
 See this wiki for more information on shared processor.
 https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
+## Sample Processor
+
+```xml
+<dict>
+		<key>Processor</key>
+		<string>com.github.tburgin.AbsoluteManageExport/AbsoluteManageExport</string>
+		<key>Arguments</key>
+		<dict>
+			<key>dest_payload_path</key>
+			<string>%RECIPE_CACHE_DIR%/%NAME%-%version%.amsdpackages</string>
+			<key>sdpackages_ampkgprops_path</key>
+			<string>%RECIPE_DIR%/%NAME%-Defaults.ampkgprops</string>
+			<key>source_payload_path</key>
+			<string>%pkg_path%</string>
+			<key>sd_name_prefix</key>
+			<string>(OSX AutoPkg) </string>
+			<key>payload_name_prefix</key>
+			<string>(OSX) </string>
+			<key>import_abman_to_servercenter</key>
+			<true/>
+		</dict>
+</dict>
+```
+
 ## Expected Behavior
 
 AbsoluteManageExport currently only performs a basic check to see if an executable with the same name is already in the SD Package database. If so, no upload takes place. If not, a new Software Package and Payload are created.
