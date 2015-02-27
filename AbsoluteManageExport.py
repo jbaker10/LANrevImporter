@@ -134,7 +134,7 @@ class AbsoluteManageExport(Processor):
         self.output("[+] unique_id [%s]" % unique_id)
         self.output("[+] unique_id_sd [%s]" % unique_id_sd)
 
-        if isinstance(sd_name_prefix, None):
+        if sd_name_prefix == None:
             sd_name_prefix = ""
 
         if os.path.exists(dest_dir):
