@@ -66,6 +66,10 @@ class AbsoluteManageExport(Processor):
             'description': 'Imports autopkg .pkg result to AbMan',
             'required': False,
         },
+        'add_s_to_availability_date': {
+            'description': 'Input additional number of seconds to be added to the AvailabilityDate on the default ampkgprops',
+            'required': False,
+        },
 
     }
 
@@ -131,7 +135,7 @@ class AbsoluteManageExport(Processor):
         return False
 
 
-    def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix, payload_name_prefix, import_pkg):
+    def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg):
         
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
@@ -197,6 +201,11 @@ class AbsoluteManageExport(Processor):
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['UniqueID'] = unique_id
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['last_modified'] = ""
 
+        ## Add defined sec to AvailabilityDate
+        date = datetime.datetime.today()
+        date = date + datetime.timedelta(0, sec_to_add)
+        self.sdpackages_template['SDPackageList'][0]['AvailabilityDate'] = date
+
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
 
         if import_pkg and not self.check_sd_payload(source_dir.split("/")[-1]):
@@ -217,8 +226,13 @@ class AbsoluteManageExport(Processor):
         sd_name_prefix = self.env.get('sd_name_prefix')
         payload_name_prefix = self.env.get('payload_name_prefix')
         import_pkg = self.env.get('import_abman_to_servercenter')
+        try:
+            sec_to_add = int(self.env.get('add_s_to_availability_date'))
+        except (ValueError, TypeError):
+            self.output("[+] add_s_to_availability_date is not an int. Reverting to default of 0")
+            sec_to_add = 0
 
-        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, import_pkg)
+        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg)
 
 
 if __name__ == '__main__':
