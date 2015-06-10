@@ -29,6 +29,7 @@ from Foundation import  NSArray,     \
                         NSUserName,    \
                         NSHomeDirectory
 
+from os.path import expanduser
 from CoreFoundation import CFPreferencesCopyAppValue
 from autopkglib import Processor, ProcessorError
 
@@ -111,14 +112,29 @@ class AbsoluteManageExport(Processor):
     def check_sd_payload(self, exe_name):
         self.output("[+] Checking if [%s] exists in SDCaches.db" % self.sdpackages_template['SDPackageList'][0]['Name'])
         
-        am_server = self.get_pref("ServerAddress")
-        database_path = NSHomeDirectory() + "/Library/Application Support/LANrev Admin/Database/"
+        self.output("[+] Attempting to build SDCaches.db path")
+        am_server     = self.get_pref("ServerAddress")
+        self.output("[+] Current AM Server [%s]" % am_server)
+        
+        database_path = expanduser(self.get_pref("DatabaseDirectory"))
+
+        if not database_path:
+            database_path = NSHomeDirectory() + "/Library/Application Support/LANrev Admin/Database/"
+            self.output("[+] Using default database path [%s]" % database_path)
+        else:
+            if not database_path[-1] == "/":
+                database_path = expanduser(database_path + "/")
+            self.output("[+] Using override database path [%s]" % database_path)
+
+
         servers_list = os.listdir(database_path)
         
         for e in servers_list:
             if am_server in e:
                 database_path = database_path + e + "/SDCaches.db"
                 break
+
+        self.output("[+] Full path to database [%s]" % database_path)
 
         conn = sqlite3.connect(database_path)
         conn.row_factory = self.dict_factory
