@@ -116,7 +116,10 @@ class AbsoluteManageExport(Processor):
         am_server     = self.get_pref("ServerAddress")
         self.output("[+] Current AM Server [%s]" % am_server)
         
-        database_path = expanduser(self.get_pref("DatabaseDirectory"))
+        try:
+            database_path = expanduser(self.get_pref("DatabaseDirectory"))
+        except:
+            pass
 
         if not database_path:
             database_path = NSHomeDirectory() + "/Library/Application Support/LANrev Admin/Database/"
