@@ -75,7 +75,11 @@ class AbsoluteManageExport(Processor):
 
     }
 
-    output_variables = {}
+    output_variables = {
+            "absolute_manage_export_summary_result": {
+            "description": "Description AbsoluteManageExport Happenings"
+        }
+    }
     appleSingleTool = "/Applications/LANrev Admin.app/Contents/MacOS/AppleSingleTool"
     sdpackages_template = {'SDPackageExportVersion': 1, 'SDPayloadFolder': 'Payloads', 'SDPackageList': [{'IsNewEntry': False, 'OptionalData': [], 'RequiresLoggedInUser': False, 'InstallTimeEnd': [], 'AllowOnDemandInstallation': False, 'InstallTime': [], 'AutoStartInstallationMinutes': [], 'SoftwarePatchIdentifier': [], 'RestartNotificationNagTime': [], 'PlatformArchitecture': 131071, 'ExecutableSize': 0, 'ResetSeed': 1, 'Priority': 2, 'WU_LanguageCode': [], 'WU_SuperseededByPackageID': [], 'WU_IsUninstallable': [], 'WU_LastDeploymentChangeTime': [], 'IsMacOSPatch': False, 'UploadStatus': [], 'id': 0, 'RequiresAdminPrivileges': False, 'InstallationContextSelector': 2, 'SoftwareSpecNeedToExist': True, 'MinimumOS': 0, 'Description': '', 'AllowOnDemandRemoval': False, 'RetrySeed': 1, 'MaximumOS': 0, 'SoftwarePatchStatus': 0, 'IsMetaPackage': False, 'SoftwarePatchSupportedOS': [], 'ScanAllVolumes': False, 'DontInstallOnSlowNetwork': False, 'ShowRestartNotification': False, 'SelfHealingOptions': [], 'AllowDeferMinutes': [], 'last_modified': '', 'SoftwarePatchRecommended': [], 'UserContext': '', 'EnableSelfHealing': False, 'InstallationDateTime': [], 'AllowToPostponeRestart': False, 'PayloadExecutableUUID': '', 'WU_IsBeta': [], 'OSPlatform': 1, 'RequiresRestart': 0, 'Name': '', 'FindCriteria': {'Operator': 'AND', 'Value': [{'Operator': 'AND', 'Value': [{'Operator': '=', 'Units': 'Minutes', 'Property': 'Name', 'Value2': '', 'Value': ''}]}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsPackage'}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsApplication'}]}, 'SDPayloadList': [{'IsNewEntry': 0, 'OptionalData': [], 'SelectedObjectIsExecutable': True, 'Description': '', 'ExecutableName': '', 'ExecutableSize': 0, 'TransferExecutableFolder': False, 'id': 0, 'SourceFilePath': '', 'last_modified': '', 'PayloadOptions': 0, 'UniqueID': '', 'IsVisible': True, 'UploadStatus': 2, 'MD5Checksum': '', 'Name': ''}], 'DisplayProgressDuringInstall': False, 'ContinueInstallationAfterFailure': False, 'UserInteraction': 1, 'WarnAboutSlowNetwork': False, 'InstallTimeOptions': 1, 'WU_IsMandatory': [], 'DownloadPackagesBeforeShowingToUser': False, 'PackageType': 1, 'WU_Deadline': [], 'SoftwarePatchVersion': [], 'WU_DeploymentAction': [], 'TargetInstallationVolume': '', 'KeepPackageFileAfterInstallation': False, 'MD5Checksum': [], 'TransferExecutableFolder': [], 'WU_SuperseededByPackageName': [], 'StagingServerOption': 1, 'ExecutableOptions': '', 'WU_UninstallationBehaviorImpact': [], 'ExecutableName': [], 'ExecutableServerVolume': [], 'DontInstallIfUserIsLoggedIn': False, 'SourceFilePath': [], 'UserContextPassword': '', 'AvailabilityDate': datetime.datetime.today(), 'WU_InstallationBehaviorImpact': [], 'PostNotificationAutoClose': [], 'UniqueID': '', 'UseSoftwareSpec': False, 'ExecutablePath': [], 'IsWindowsPatch': False}]}
     open_exe = "/usr/bin/open"
@@ -109,7 +113,24 @@ class AbsoluteManageExport(Processor):
             for chunk in iter(lambda: f.read(block_size), b''): 
                  md5.update(chunk)
         return md5.hexdigest()
+    
 
+    def set_summary_report(self, server, package, payload_id):
+        # clear any pre-exising summary result
+        if 'absolute_manage_export_summary_result' in self.env:
+            del self.env['absolute_manage_export_summary_result']
+
+        self.env["absolute_manage_export_summary_result"] = {
+            'summary_text': 'The following SDPackages were uploaded:',
+            'report_fields': ['server', 'package', 'id'],
+            'data': {
+                'server': server,
+                'package': package,
+                'id': payload_id
+            }
+        }
+
+    
     def check_sd_payload(self, exe_name):
         self.output("[+] Checking if [%s] exists in SDCaches.db" % self.sdpackages_template['SDPackageList'][0]['Name'])
         
@@ -231,20 +252,23 @@ class AbsoluteManageExport(Processor):
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
 
         if import_pkg and not self.check_sd_payload(source_dir.split("/")[-1]):
-            self.output("[+] Attemting to upload [%s] to Absolute Manage Server Center" % dest_dir)
+            self.output("[+] Attempting to upload [%s] to Absolute Manage Server Center" % dest_dir)
             try:
                 subprocess.check_output([self.open_exe, "lanrevadmin://importsoftwarepackage?packagepath=" + dest_dir])
                 subprocess.check_output([self.open_exe, "lanrevadmin://commitsoftwarepackagechanges"])
-                print "\t\t[+] Uploading..."
-                time.sleep(3)
+                self.output("[+] Uploading...")
+                time.sleep(5)
                 lanrev_pid = subprocess.check_output(["/usr/bin/pgrep", "LANrev Admin"]).strip("\n")
                 while True:
                     lanrev_open_files = subprocess.check_output(["/usr/sbin/lsof", "-p", lanrev_pid])
                     payload_check = dest_dir + "/Payloads/" + unique_id
                     if payload_check in lanrev_open_files:
-                        print "\t\t[+] Uploading..."
+                        self.output("[+] Uploading...")
                         time.sleep(1)
                     else:
+                        self.set_summary_report(self.get_pref("ServerAddress"),
+                            self.sdpackages_template['SDPackageList'][0]['Name'],
+                            unique_id)
                         break
     
             except (subprocess.CalledProcessError, OSError), err:
