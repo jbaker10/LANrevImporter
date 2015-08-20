@@ -14,8 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os,   \
-       uuid,  \
+import os,  \
+       uuid, \
+       time,  \
        shutil, \
        hashlib, \
        datetime, \
@@ -234,6 +235,18 @@ class AbsoluteManageExport(Processor):
             try:
                 subprocess.check_output([self.open_exe, "lanrevadmin://importsoftwarepackage?packagepath=" + dest_dir])
                 subprocess.check_output([self.open_exe, "lanrevadmin://commitsoftwarepackagechanges"])
+                print "\t\t[+] Uploading..."
+                time.sleep(3)
+                lanrev_pid = subprocess.check_output(["/usr/bin/pgrep", "LANrev Admin"]).strip("\n")
+                while True:
+                    lanrev_open_files = subprocess.check_output(["/usr/sbin/lsof", "-p", lanrev_pid])
+                    payload_check = dest_dir + "/Payloads/" + unique_id
+                    if payload_check in lanrev_open_files:
+                        print "\t\t[+] Uploading..."
+                        time.sleep(1)
+                    else:
+                        break
+    
             except (subprocess.CalledProcessError, OSError), err:
                 raise err
         else:
