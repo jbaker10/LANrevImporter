@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2014 Thomas Burgin
+# Copyright 2015 Thomas Burgin
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,8 +38,9 @@ __all__ = ["AbsoluteManageExport"]
 
 
 class AbsoluteManageExport(Processor):
-    '''Take as input a pkg or executable and a SDPackages.ampkgprops (plist config) to output a .amsdpackages for use in Absolute Manage.
-        If no SDPackages.ampkgprops is specified a default config will be generated'''
+    '''Take as input a pkg or executable and a SDPackages.ampkgprops (plist config)
+       to output a .amsdpackages for use in Absolute Manage. If no
+       SDPackages.ampkgprops is specified a default config will be generated'''
 
     description = __doc__
 
@@ -72,6 +73,10 @@ class AbsoluteManageExport(Processor):
             'description': 'Input additional number of seconds to be added to the AvailabilityDate on the default ampkgprops',
             'required': False,
         },
+        'installation_conditions': {
+            'description': 'Input additional number of seconds to be added to the AvailabilityDate on the default ampkgprops',
+            'required': False,
+        },
 
     }
 
@@ -81,7 +86,123 @@ class AbsoluteManageExport(Processor):
         }
     }
     appleSingleTool = "/Applications/LANrev Admin.app/Contents/MacOS/AppleSingleTool"
-    sdpackages_template = {'SDPackageExportVersion': 1, 'SDPayloadFolder': 'Payloads', 'SDPackageList': [{'IsNewEntry': False, 'OptionalData': [], 'RequiresLoggedInUser': False, 'InstallTimeEnd': [], 'AllowOnDemandInstallation': False, 'InstallTime': [], 'AutoStartInstallationMinutes': [], 'SoftwarePatchIdentifier': [], 'RestartNotificationNagTime': [], 'PlatformArchitecture': 131071, 'ExecutableSize': 0, 'ResetSeed': 1, 'Priority': 2, 'WU_LanguageCode': [], 'WU_SuperseededByPackageID': [], 'WU_IsUninstallable': [], 'WU_LastDeploymentChangeTime': [], 'IsMacOSPatch': False, 'UploadStatus': [], 'id': 0, 'RequiresAdminPrivileges': False, 'InstallationContextSelector': 2, 'SoftwareSpecNeedToExist': True, 'MinimumOS': 0, 'Description': '', 'AllowOnDemandRemoval': False, 'RetrySeed': 1, 'MaximumOS': 0, 'SoftwarePatchStatus': 0, 'IsMetaPackage': False, 'SoftwarePatchSupportedOS': [], 'ScanAllVolumes': False, 'DontInstallOnSlowNetwork': False, 'ShowRestartNotification': False, 'SelfHealingOptions': [], 'AllowDeferMinutes': [], 'last_modified': '', 'SoftwarePatchRecommended': [], 'UserContext': '', 'EnableSelfHealing': False, 'InstallationDateTime': [], 'AllowToPostponeRestart': False, 'PayloadExecutableUUID': '', 'WU_IsBeta': [], 'OSPlatform': 1, 'RequiresRestart': 0, 'Name': '', 'FindCriteria': {'Operator': 'AND', 'Value': [{'Operator': 'AND', 'Value': [{'Operator': '=', 'Units': 'Minutes', 'Property': 'Name', 'Value2': '', 'Value': ''}]}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsPackage'}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsApplication'}]}, 'SDPayloadList': [{'IsNewEntry': 0, 'OptionalData': [], 'SelectedObjectIsExecutable': True, 'Description': '', 'ExecutableName': '', 'ExecutableSize': 0, 'TransferExecutableFolder': False, 'id': 0, 'SourceFilePath': '', 'last_modified': '', 'PayloadOptions': 0, 'UniqueID': '', 'IsVisible': True, 'UploadStatus': 2, 'MD5Checksum': '', 'Name': ''}], 'DisplayProgressDuringInstall': False, 'ContinueInstallationAfterFailure': False, 'UserInteraction': 1, 'WarnAboutSlowNetwork': False, 'InstallTimeOptions': 1, 'WU_IsMandatory': [], 'DownloadPackagesBeforeShowingToUser': False, 'PackageType': 1, 'WU_Deadline': [], 'SoftwarePatchVersion': [], 'WU_DeploymentAction': [], 'TargetInstallationVolume': '', 'KeepPackageFileAfterInstallation': False, 'MD5Checksum': [], 'TransferExecutableFolder': [], 'WU_SuperseededByPackageName': [], 'StagingServerOption': 1, 'ExecutableOptions': '', 'WU_UninstallationBehaviorImpact': [], 'ExecutableName': [], 'ExecutableServerVolume': [], 'DontInstallIfUserIsLoggedIn': False, 'SourceFilePath': [], 'UserContextPassword': '', 'AvailabilityDate': datetime.datetime.today(), 'WU_InstallationBehaviorImpact': [], 'PostNotificationAutoClose': [], 'UniqueID': '', 'UseSoftwareSpec': False, 'ExecutablePath': [], 'IsWindowsPatch': False}]}
+    sdpackages_template = {'SDPackageExportVersion': 1,
+                           'SDPayloadFolder': 'Payloads',
+                           'SDPackageList': [{'IsNewEntry': False,
+                                              'OptionalData': [],
+                                              'RequiresLoggedInUser': False,
+                                              'InstallTimeEnd': [],
+                                              'AllowOnDemandInstallation': False,
+                                              'InstallTime': [],
+                                              'AutoStartInstallationMinutes': [],
+                                              'SoftwarePatchIdentifier': [],
+                                              'RestartNotificationNagTime': [],
+                                              'PlatformArchitecture': 131071,
+                                              'ExecutableSize': 0,
+                                              'ResetSeed': 1,
+                                              'Priority': 2,
+                                              'WU_LanguageCode': [],
+                                              'WU_SuperseededByPackageID': [],
+                                              'WU_IsUninstallable': [],
+                                              'WU_LastDeploymentChangeTime': [],
+                                              'IsMacOSPatch': False,
+                                              'UploadStatus': [],
+                                              'id': 0,
+                                              'RequiresAdminPrivileges': False,
+                                              'InstallationContextSelector': 2,
+                                              'SoftwareSpecNeedToExist': True,
+                                              'MinimumOS': 0,
+                                              'Description': '',
+                                              'AllowOnDemandRemoval': False,
+                                              'RetrySeed': 1,
+                                              'MaximumOS': 0,
+                                              'SoftwarePatchStatus': 0,
+                                              'IsMetaPackage': False,
+                                              'SoftwarePatchSupportedOS': [],
+                                              'ScanAllVolumes': False,
+                                              'DontInstallOnSlowNetwork': False,
+                                              'ShowRestartNotification': False,
+                                              'SelfHealingOptions': [],
+                                              'AllowDeferMinutes': [],
+                                              'last_modified': '',
+                                              'SoftwarePatchRecommended': [],
+                                              'UserContext': '',
+                                              'EnableSelfHealing': False,
+                                              'InstallationDateTime': [],
+                                              'AllowToPostponeRestart': False,
+                                              'PayloadExecutableUUID': '',
+                                              'WU_IsBeta': [],
+                                              'OSPlatform': 1,
+                                              'RequiresRestart': 0,
+                                              'Name': '',
+                                              'FindCriteria':
+                                                  {'Operator': 'AND', 'Value':
+                                                   [{'Operator': 'AND', 'Value':
+                                                     [{'Operator': '=',
+                                                       'Units': 'Minutes',
+                                                       'Property': 'Name',
+                                                       'Value2': '',
+                                                       'Value': ''}]},
+                                                    {'UseNativeType': True,
+                                                     'Value': True,
+                                                     'Units': 'Minutes',
+                                                     'Value2': '',
+                                                     'Operator': '=',
+                                                     'Property': 'IsPackage'},
+                                                    {'UseNativeType': True,
+                                                     'Value': True,
+                                                     'Units': 'Minutes',
+                                                     'Value2': '',
+                                                     'Operator': '=',
+                                                     'Property': 'IsApplication'}]},
+                                              'SDPayloadList':
+                                                  [{'IsNewEntry': 0,
+                                                    'OptionalData': [],
+                                                    'SelectedObjectIsExecutable': True,
+                                                    'Description': '',
+                                                    'ExecutableName': '',
+                                                    'ExecutableSize': 0,
+                                                    'TransferExecutableFolder': False,
+                                                    'id': 0,
+                                                    'SourceFilePath': '',
+                                                    'last_modified': '',
+                                                    'PayloadOptions': 0,
+                                                    'UniqueID': '',
+                                                    'IsVisible': True,
+                                                    'UploadStatus': 2,
+                                                    'MD5Checksum': '',
+                                                    'Name': ''}],
+                                              'DisplayProgressDuringInstall': False,
+                                              'ContinueInstallationAfterFailure': False,
+                                              'UserInteraction': 1,
+                                              'WarnAboutSlowNetwork': False,
+                                              'InstallTimeOptions': 1,
+                                              'WU_IsMandatory': [],
+                                              'DownloadPackagesBeforeShowingToUser': False,
+                                              'PackageType': 1,
+                                              'WU_Deadline': [],
+                                              'SoftwarePatchVersion': [],
+                                              'WU_DeploymentAction': [],
+                                              'TargetInstallationVolume': '',
+                                              'KeepPackageFileAfterInstallation': False,
+                                              'MD5Checksum': [],
+                                              'TransferExecutableFolder': [],
+                                              'WU_SuperseededByPackageName': [],
+                                              'StagingServerOption': 1,
+                                              'ExecutableOptions': '',
+                                              'WU_UninstallationBehaviorImpact': [],
+                                              'ExecutableName': [],
+                                              'ExecutableServerVolume': [],
+                                              'DontInstallIfUserIsLoggedIn': False,
+                                              'SourceFilePath': [],
+                                              'UserContextPassword': '',
+                                              'AvailabilityDate': datetime.datetime.today(),
+                                              'WU_InstallationBehaviorImpact': [],
+                                              'PostNotificationAutoClose': [],
+                                              'UniqueID': '',
+                                              'UseSoftwareSpec': False,
+                                              'ExecutablePath': [],
+                                              'IsWindowsPatch': False}]}
     open_exe = "/usr/bin/open"
     BUNDLE_ID = "com.poleposition-sw.lanrev_admin"
 
@@ -130,16 +251,16 @@ class AbsoluteManageExport(Processor):
             }
         }
 
-    
+
     def check_sd_payload(self, exe_name):
         self.output("[+] Checking if [%s] exists in SDCaches.db" % self.sdpackages_template['SDPackageList'][0]['Name'])
-        
+
         self.output("[+] Attempting to build SDCaches.db path")
-        am_server     = self.get_pref("ServerAddress")
+        am_server = self.get_pref("ServerAddress")
         self.output("[+] Current AM Server [%s]" % am_server)
-        
+
         database_path = None
-        
+
         try:
             database_path = expanduser(self.get_pref("DatabaseDirectory"))
         except:
@@ -155,7 +276,7 @@ class AbsoluteManageExport(Processor):
 
 
         servers_list = os.listdir(database_path)
-        
+
         for e in servers_list:
             if am_server in e:
                 database_path = database_path + e + "/SDCaches.db"
@@ -179,7 +300,7 @@ class AbsoluteManageExport(Processor):
 
 
     def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg):
-        
+
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
         self.output("[+] unique_id [%s]" % unique_id)
