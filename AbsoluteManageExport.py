@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2014 Thomas Burgin
+# Copyright 2015 Thomas Burgin
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,8 +38,9 @@ __all__ = ["AbsoluteManageExport"]
 
 
 class AbsoluteManageExport(Processor):
-    '''Take as input a pkg or executable and a SDPackages.ampkgprops (plist config) to output a .amsdpackages for use in Absolute Manage.
-        If no SDPackages.ampkgprops is specified a default config will be generated'''
+    '''Take as input a pkg or executable and a SDPackages.ampkgprops (plist config)
+       to output a .amsdpackages for use in Absolute Manage. If no
+       SDPackages.ampkgprops is specified a default config will be generated'''
 
     description = __doc__
 
@@ -72,16 +73,140 @@ class AbsoluteManageExport(Processor):
             'description': 'Input additional number of seconds to be added to the AvailabilityDate on the default ampkgprops',
             'required': False,
         },
+        'installation_condition_name': {
+            'description': 'Enter the Application name of the app that must be on the system in order to install. This corresponds to the "File Name" operator',
+            'required': False,
+        },
+        'installation_condition_version_string': {
+            'description': 'Enter the Version String that the app must be on the system in order to install. This corresponds to the "File Version String" operator',
+            'required': False,
+        },
 
     }
 
     output_variables = {
             "absolute_manage_export_summary_result": {
-            "description": "Description AbsoluteManageExport Happenings"
-        }
+                "description": "Description AbsoluteManageExport Happenings"
+            }
     }
     appleSingleTool = "/Applications/LANrev Admin.app/Contents/MacOS/AppleSingleTool"
-    sdpackages_template = {'SDPackageExportVersion': 1, 'SDPayloadFolder': 'Payloads', 'SDPackageList': [{'IsNewEntry': False, 'OptionalData': [], 'RequiresLoggedInUser': False, 'InstallTimeEnd': [], 'AllowOnDemandInstallation': False, 'InstallTime': [], 'AutoStartInstallationMinutes': [], 'SoftwarePatchIdentifier': [], 'RestartNotificationNagTime': [], 'PlatformArchitecture': 131071, 'ExecutableSize': 0, 'ResetSeed': 1, 'Priority': 2, 'WU_LanguageCode': [], 'WU_SuperseededByPackageID': [], 'WU_IsUninstallable': [], 'WU_LastDeploymentChangeTime': [], 'IsMacOSPatch': False, 'UploadStatus': [], 'id': 0, 'RequiresAdminPrivileges': False, 'InstallationContextSelector': 2, 'SoftwareSpecNeedToExist': True, 'MinimumOS': 0, 'Description': '', 'AllowOnDemandRemoval': False, 'RetrySeed': 1, 'MaximumOS': 0, 'SoftwarePatchStatus': 0, 'IsMetaPackage': False, 'SoftwarePatchSupportedOS': [], 'ScanAllVolumes': False, 'DontInstallOnSlowNetwork': False, 'ShowRestartNotification': False, 'SelfHealingOptions': [], 'AllowDeferMinutes': [], 'last_modified': '', 'SoftwarePatchRecommended': [], 'UserContext': '', 'EnableSelfHealing': False, 'InstallationDateTime': [], 'AllowToPostponeRestart': False, 'PayloadExecutableUUID': '', 'WU_IsBeta': [], 'OSPlatform': 1, 'RequiresRestart': 0, 'Name': '', 'FindCriteria': {'Operator': 'AND', 'Value': [{'Operator': 'AND', 'Value': [{'Operator': '=', 'Units': 'Minutes', 'Property': 'Name', 'Value2': '', 'Value': ''}]}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsPackage'}, {'UseNativeType': True, 'Value': True, 'Units': 'Minutes', 'Value2': '', 'Operator': '=', 'Property': 'IsApplication'}]}, 'SDPayloadList': [{'IsNewEntry': 0, 'OptionalData': [], 'SelectedObjectIsExecutable': True, 'Description': '', 'ExecutableName': '', 'ExecutableSize': 0, 'TransferExecutableFolder': False, 'id': 0, 'SourceFilePath': '', 'last_modified': '', 'PayloadOptions': 0, 'UniqueID': '', 'IsVisible': True, 'UploadStatus': 2, 'MD5Checksum': '', 'Name': ''}], 'DisplayProgressDuringInstall': False, 'ContinueInstallationAfterFailure': False, 'UserInteraction': 1, 'WarnAboutSlowNetwork': False, 'InstallTimeOptions': 1, 'WU_IsMandatory': [], 'DownloadPackagesBeforeShowingToUser': False, 'PackageType': 1, 'WU_Deadline': [], 'SoftwarePatchVersion': [], 'WU_DeploymentAction': [], 'TargetInstallationVolume': '', 'KeepPackageFileAfterInstallation': False, 'MD5Checksum': [], 'TransferExecutableFolder': [], 'WU_SuperseededByPackageName': [], 'StagingServerOption': 1, 'ExecutableOptions': '', 'WU_UninstallationBehaviorImpact': [], 'ExecutableName': [], 'ExecutableServerVolume': [], 'DontInstallIfUserIsLoggedIn': False, 'SourceFilePath': [], 'UserContextPassword': '', 'AvailabilityDate': datetime.datetime.today(), 'WU_InstallationBehaviorImpact': [], 'PostNotificationAutoClose': [], 'UniqueID': '', 'UseSoftwareSpec': False, 'ExecutablePath': [], 'IsWindowsPatch': False}]}
+    sdpackages_template = {'SDPackageExportVersion': 1,
+                           'SDPayloadFolder': 'Payloads',
+                           'SDPackageList': [{'IsNewEntry': False,
+                                              'OptionalData': [],
+                                              'RequiresLoggedInUser': False,
+                                              'InstallTimeEnd': [],
+                                              'AllowOnDemandInstallation': False,
+                                              'InstallTime': [],
+                                              'AutoStartInstallationMinutes': [],
+                                              'SoftwarePatchIdentifier': [],
+                                              'RestartNotificationNagTime': [],
+                                              'PlatformArchitecture': 131071,
+                                              'ExecutableSize': 0,
+                                              'ResetSeed': 1,
+                                              'Priority': 2,
+                                              'WU_LanguageCode': [],
+                                              'WU_SuperseededByPackageID': [],
+                                              'WU_IsUninstallable': [],
+                                              'WU_LastDeploymentChangeTime': [],
+                                              'IsMacOSPatch': False,
+                                              'UploadStatus': [],
+                                              'id': 0,
+                                              'RequiresAdminPrivileges': False,
+                                              'InstallationContextSelector': 2,
+                                              'SoftwareSpecNeedToExist': True,
+                                              'MinimumOS': 0,
+                                              'Description': '',
+                                              'AllowOnDemandRemoval': False,
+                                              'RetrySeed': 1,
+                                              'MaximumOS': 0,
+                                              'SoftwarePatchStatus': 0,
+                                              'IsMetaPackage': False,
+                                              'SoftwarePatchSupportedOS': [],
+                                              'ScanAllVolumes': False,
+                                              'DontInstallOnSlowNetwork': False,
+                                              'ShowRestartNotification': False,
+                                              'SelfHealingOptions': [],
+                                              'AllowDeferMinutes': [],
+                                              'last_modified': '',
+                                              'SoftwarePatchRecommended': [],
+                                              'UserContext': '',
+                                              'EnableSelfHealing': False,
+                                              'InstallationDateTime': [],
+                                              'AllowToPostponeRestart': False,
+                                              'PayloadExecutableUUID': '',
+                                              'WU_IsBeta': [],
+                                              'OSPlatform': 1,
+                                              'RequiresRestart': 0,
+                                              'Name': '',
+                                              'FindCriteria':
+                                                  {'Operator': 'AND', 'Value':
+                                                   [{'Operator': 'AND', 'Value':
+                                                     [{'Operator': '=',
+                                                       'Units': 'Minutes',
+                                                       'Property': 'Name',
+                                                       'Value2': '',
+                                                       'Value': ''}]},
+                                                    {'UseNativeType': True,
+                                                     'Value': True,
+                                                     'Units': 'Minutes',
+                                                     'Value2': '',
+                                                     'Operator': '=',
+                                                     'Property': 'IsPackage'},
+                                                    {'UseNativeType': True,
+                                                     'Value': True,
+                                                     'Units': 'Minutes',
+                                                     'Value2': '',
+                                                     'Operator': '=',
+                                                     'Property': 'IsApplication'}]},
+                                              'SDPayloadList':
+                                                  [{'IsNewEntry': 0,
+                                                    'OptionalData': [],
+                                                    'SelectedObjectIsExecutable': True,
+                                                    'Description': '',
+                                                    'ExecutableName': '',
+                                                    'ExecutableSize': 0,
+                                                    'TransferExecutableFolder': False,
+                                                    'id': 0,
+                                                    'SourceFilePath': '',
+                                                    'last_modified': '',
+                                                    'PayloadOptions': 0,
+                                                    'UniqueID': '',
+                                                    'IsVisible': True,
+                                                    'UploadStatus': 2,
+                                                    'MD5Checksum': '',
+                                                    'Name': ''}],
+                                              'DisplayProgressDuringInstall': False,
+                                              'ContinueInstallationAfterFailure': False,
+                                              'UserInteraction': 1,
+                                              'WarnAboutSlowNetwork': False,
+                                              'InstallTimeOptions': 1,
+                                              'WU_IsMandatory': [],
+                                              'DownloadPackagesBeforeShowingToUser': False,
+                                              'PackageType': 1,
+                                              'WU_Deadline': [],
+                                              'SoftwarePatchVersion': [],
+                                              'WU_DeploymentAction': [],
+                                              'TargetInstallationVolume': '',
+                                              'KeepPackageFileAfterInstallation': False,
+                                              'MD5Checksum': [],
+                                              'TransferExecutableFolder': [],
+                                              'WU_SuperseededByPackageName': [],
+                                              'StagingServerOption': 1,
+                                              'ExecutableOptions': '',
+                                              'WU_UninstallationBehaviorImpact': [],
+                                              'ExecutableName': [],
+                                              'ExecutableServerVolume': [],
+                                              'DontInstallIfUserIsLoggedIn': False,
+                                              'SourceFilePath': [],
+                                              'UserContextPassword': '',
+                                              'AvailabilityDate': datetime.datetime.today(),
+                                              'WU_InstallationBehaviorImpact': [],
+                                              'PostNotificationAutoClose': [],
+                                              'UniqueID': '',
+                                              'UseSoftwareSpec': False,
+                                              'ExecutablePath': [],
+                                              'IsWindowsPatch': False}]}
     open_exe = "/usr/bin/open"
     BUNDLE_ID = "com.poleposition-sw.lanrev_admin"
 
@@ -98,18 +223,18 @@ class AbsoluteManageExport(Processor):
         elif isinstance(value, NSDictionary):
             value = dict(value)
         return value
-    
-    
+
+
     def dict_factory(self, cursor, row):
         d = {}
         for idx, col in enumerate(cursor.description):
             d[col[0]] = row[idx]
         return d
-    
-   
+
+
     def md5_for_file(self, path, block_size=256*128):
         md5 = hashlib.md5()
-        with open(path,'rb') as f: 
+        with open(path, 'rb') as f:
             for chunk in iter(lambda: f.read(block_size), b''): 
                  md5.update(chunk)
         return md5.hexdigest()
@@ -130,16 +255,16 @@ class AbsoluteManageExport(Processor):
             }
         }
 
-    
+
     def check_sd_payload(self, exe_name):
         self.output("[+] Checking if [%s] exists in SDCaches.db" % self.sdpackages_template['SDPackageList'][0]['Name'])
-        
+
         self.output("[+] Attempting to build SDCaches.db path")
-        am_server     = self.get_pref("ServerAddress")
+        am_server = self.get_pref("ServerAddress")
         self.output("[+] Current AM Server [%s]" % am_server)
-        
+
         database_path = None
-        
+
         try:
             database_path = expanduser(self.get_pref("DatabaseDirectory"))
         except:
@@ -155,7 +280,7 @@ class AbsoluteManageExport(Processor):
 
 
         servers_list = os.listdir(database_path)
-        
+
         for e in servers_list:
             if am_server in e:
                 database_path = database_path + e + "/SDCaches.db"
@@ -177,19 +302,47 @@ class AbsoluteManageExport(Processor):
 
         return False
 
+    def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix,
+                            payload_name_prefix, sec_to_add, import_pkg,
+                            installation_condition_name,
+                            installation_condition_version_string):
 
-    def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg):
-        
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
         self.output("[+] unique_id [%s]" % unique_id)
         self.output("[+] unique_id_sd [%s]" % unique_id_sd)
+        use_software_spec = False
 
-        if sd_name_prefix == None:
+        if sd_name_prefix is None:
             sd_name_prefix = ""
 
-        if payload_name_prefix == None:
+        if payload_name_prefix is None:
             payload_name_prefix = ""
+
+        if installation_condition_name is not None or installation_condition_version_string is not None:
+            use_software_spec = True
+
+        if installation_condition_name is not None:
+            if ".app" not in installation_condition_name and ".pkg" not in installation_condition_name:
+                installation_condition_name = installation_condition_name + ".app"
+                self.output("[+] Appending installation condition name with '.app'")
+
+        def add_comparison_operators():
+            name_dict = dict(
+                Operator="=",
+                Units="Minutes",
+                Property="Name",
+                Value="",
+                Value2=""
+            )
+            version_dict = dict(
+                Operator="=",
+                Units="Minutes",
+                Property="VersionString",
+                Value="",
+                Value2=""
+            )
+            self.sdpackages_template['SDPackageList'][0]['FindCriteria']['Value'][0]['Value'] = [name_dict, version_dict]
 
         if os.path.exists(dest_dir):
             self.output("[+] dest_dir [%s] exists. Removing it." % dest_dir)
@@ -200,19 +353,17 @@ class AbsoluteManageExport(Processor):
             os.mkdir(dest_dir)
             self.output("[+] Creating [%s/Payloads]" % dest_dir)
             os.mkdir(dest_dir + "/Payloads")
-
         except OSError, err:
             if os.path.exists(dest_dir):
                 pass
             else:
-                self.output("[+] Failed to create [%s] Please check your permissions and try again. Error [%s]"  (dest_dir, err))
+                self.output("[+] Failed to create [%s] Please check your permissions and try again. Error [%s]" % (dest_dir, err))
 
         try:
             subprocess.check_output([self.appleSingleTool, "encode", "-s", source_dir, "-t", dest_dir + "/Payloads/" + unique_id, "-p", "-x", "-z", "3"])
             self.output("[+] Exported [%s] to [%s]" % (source_dir, dest_dir))
-
         except (subprocess.CalledProcessError, OSError), err:
-            self.output("[!] Please make sure [%s] exists" %  appleSingleTool)
+            self.output("[!] Please make sure [%s] exists" % appleSingleTool)
             raise err
 
         try:
@@ -226,11 +377,16 @@ class AbsoluteManageExport(Processor):
         try:
             executable_size = subprocess.check_output(["/usr/bin/stat", "-f%z", source_dir])
             md5_checksum = self.md5_for_file(dest_dir + "/Payloads/" + unique_id)
-
         except (subprocess.CalledProcessError, OSError), err:
             raise err
 
         self.sdpackages_template = plistlib.readPlist(dest_dir + "/SDPackages.ampkgprops")
+
+        if installation_condition_name is None and installation_condition_version_string is not None:
+            raise ProcessorError("[!] You cannot use the 'installation_condition_version_string' input variable without also defining the 'installation_condition_name' input variable")
+
+        if installation_condition_name is None:
+            installation_condition_name = ""
 
         self.sdpackages_template['SDPackageList'][0]['Name'] = sd_name_prefix + source_dir.split("/")[-1].strip(".pkg")
         self.sdpackages_template['SDPackageList'][0]['PayloadExecutableUUID'] = unique_id
@@ -243,13 +399,17 @@ class AbsoluteManageExport(Processor):
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['SourceFilePath'] = source_dir
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['UniqueID'] = unique_id
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['last_modified'] = ""
-
+        self.sdpackages_template['SDPackageList'][0]['UseSoftwareSpec'] = use_software_spec
+        if installation_condition_version_string is not None:
+            add_comparison_operators()
+            self.sdpackages_template['SDPackageList'][0]['FindCriteria']['Value'][0]['Value'][1]['Value'] = installation_condition_version_string
+        self.sdpackages_template['SDPackageList'][0]['FindCriteria']['Value'][0]['Value'][0]['Value'] = installation_condition_name
         ## Add defined sec to AvailabilityDate
         date = datetime.datetime.today()
         date = date + datetime.timedelta(0, sec_to_add)
         self.sdpackages_template['SDPackageList'][0]['AvailabilityDate'] = date
-
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
+
 
         if import_pkg and not self.check_sd_payload(source_dir.split("/")[-1]):
             self.output("[+] Attempting to upload [%s] to Absolute Manage Server Center" % dest_dir)
@@ -284,13 +444,15 @@ class AbsoluteManageExport(Processor):
         sd_name_prefix = self.env.get('sd_name_prefix')
         payload_name_prefix = self.env.get('payload_name_prefix')
         import_pkg = self.env.get('import_abman_to_servercenter')
+        installation_condition_name = self.env.get('installation_condition_name')
+        installation_condition_version_string = self.env.get('installation_condition_version_string')
         try:
             sec_to_add = int(self.env.get('add_s_to_availability_date'))
         except (ValueError, TypeError):
             self.output("[+] add_s_to_availability_date is not an int. Reverting to default of 0")
             sec_to_add = 0
 
-        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg)
+        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg, installation_condition_name, installation_condition_version_string)
 
 
 if __name__ == '__main__':
