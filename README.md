@@ -67,6 +67,10 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 			<integer>86400</integer>
 			<key>import_abman_to_servercenter</key>
 			<true/>
+			<key>installation_condition_name</key>
+			<string>%NAME%.app</string>
+			<key>installation_condition_version_string</key>
+			<string>1.0</string>
 		</dict>
 </dict>
 ```
