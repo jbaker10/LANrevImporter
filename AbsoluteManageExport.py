@@ -256,56 +256,72 @@ class AbsoluteManageExport(Processor):
         }
 
 
-    def check_sd_payload(self, exe_name):
-        self.output("[+] Checking if [%s] exists in SDCaches.db" % self.sdpackages_template['SDPackageList'][0]['Name'])
 
-        self.output("[+] Attempting to build SDCaches.db path")
-        am_server = self.get_pref("ServerAddress")
-        self.output("[+] Current AM Server [%s]" % am_server)
-
-        database_path = None
-
-        try:
-            database_path = expanduser(self.get_pref("DatabaseDirectory"))
-        except:
-            pass
-
-        if not database_path:
-            database_path = NSHomeDirectory() + "/Library/Application Support/LANrev Admin/Database/"
-            self.output("[+] Using default database path [%s]" % database_path)
-        else:
-            if not database_path[-1] == "/":
-                database_path = expanduser(database_path + "/")
-            self.output("[+] Using override database path [%s]" % database_path)
-
-
-        servers_list = os.listdir(database_path)
-
-        for e in servers_list:
-            if am_server in e:
-                database_path = database_path + e + "/SDCaches.db"
-                break
-
-        self.output("[+] Full path to database [%s]" % database_path)
-
-        conn = sqlite3.connect(database_path)
-        conn.row_factory = self.dict_factory
-        c = conn.cursor()
-        sd_packages = c.execute("select * from 'sd_payloads_latest'").fetchall()
-        c.close()
-        conn.close()
-
-        for e in sd_packages:
-            if e["ExecutableName"] == exe_name:
-                self.output("[+] [%s] already exists in Absolute Manage Server Center" % exe_name)
-                return True
-
-        return False
 
     def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix,
                             payload_name_prefix, sec_to_add, import_pkg,
                             installation_condition_name,
                             installation_condition_version_string):
+
+        def check_sd_payload(exe_name):
+            self.output("[+] Checking if [%s] exists in SDCaches.db" % self.sdpackages_template['SDPackageList'][0]['Name'])
+
+            self.output("[+] Attempting to build SDCaches.db path")
+            am_server = self.get_pref("ServerAddress")
+            self.output("[+] Current AM Server [%s]" % am_server)
+
+            database_path = None
+
+            try:
+                database_path = expanduser(self.get_pref("DatabaseDirectory"))
+            except:
+                pass
+
+            if not database_path:
+                database_path = NSHomeDirectory() + "/Library/Application Support/LANrev Admin/Database/"
+                self.output("[+] Using default database path [%s]" % database_path)
+            else:
+                if not database_path[-1] == "/":
+                    database_path = expanduser(database_path + "/")
+                self.output("[+] Using override database path [%s]" % database_path)
+
+
+            servers_list = os.listdir(database_path)
+
+            for e in servers_list:
+                if am_server in e:
+                    database_path = database_path + e + "/SDCaches.db"
+                    break
+
+            self.output("[+] Full path to database [%s]" % database_path)
+
+            conn = sqlite3.connect(database_path)
+            conn.row_factory = self.dict_factory
+            c = conn.cursor()
+            sd_packages = c.execute("select * from 'sd_payloads_latest'").fetchall()
+            c.close()
+            conn.close()
+
+            # Need to check against MD5 if the name already exists to see if it is in fact the same package
+            # It needs to MD5 the file under the Payloads/ dir under the 
+
+            def md5Checksum(filePath):
+                with open(filePath, 'rb') as fh:
+                    m = hashlib.md5()
+                    while True:
+                        data = fh.read(8192)
+                        if not data:
+                            break
+                        m.update(data)
+                    return m.hexdigest()     
+
+            for e in sd_packages:
+                if e["ExecutableName"] == exe_name:
+                    if e["MD5Checksum"] == md5Checksum(dest_dir + "/Payloads/" + unique_id):
+                        self.output("[+] The app [%s] already exists with the same MD5Checksum [%s]" % exe_name, md5Checksum)
+                        return True
+            return False
+
 
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
@@ -363,7 +379,7 @@ class AbsoluteManageExport(Processor):
             subprocess.check_output([self.appleSingleTool, "encode", "-s", source_dir, "-t", dest_dir + "/Payloads/" + unique_id, "-p", "-x", "-z", "3"])
             self.output("[+] Exported [%s] to [%s]" % (source_dir, dest_dir))
         except (subprocess.CalledProcessError, OSError), err:
-            self.output("[!] Please make sure [%s] exists" % appleSingleTool)
+            self.output("[!] Please make sure [%s] exists" % self.appleSingleTool)
             raise err
 
         try:
@@ -411,7 +427,7 @@ class AbsoluteManageExport(Processor):
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
 
 
-        if import_pkg and not self.check_sd_payload(source_dir.split("/")[-1]):
+        if import_pkg and not check_sd_payload(source_dir.split("/")[-1]):
             self.output("[+] Attempting to upload [%s] to Absolute Manage Server Center" % dest_dir)
             try:
                 subprocess.check_output([self.open_exe, "lanrevadmin://importsoftwarepackage?packagepath=" + dest_dir])
