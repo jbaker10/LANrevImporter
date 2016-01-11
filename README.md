@@ -1,3 +1,17 @@
+# Fork for LANrev OS platform additions
+
+This fork adds the ability to add additional criteria to a LANrev SD package, including:
+os_platform
+min_os
+max_os
+platform_arch
+
+There are a couple recipes here you can test with. Or you can modify others, just make sure you specify "AbsoluteManageExport" as the processor and place the forked AbsoluteManageExport.py in /Library/AutoPkg/autopkglibs/
+
+My main motivation for these additional values is so that Windows packages can be added to LANrev. 
+
+Read the contents of the AbsoluteManageExport.py to see platform options. 
+
 ## AbsoluteManageExport
 
 AbsoluteManageExport is an AutoPkg Processor for Absolute Manage.

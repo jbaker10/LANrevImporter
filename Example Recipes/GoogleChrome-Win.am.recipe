@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Description</key>
+	<string>Downloads latest Google Chrome x86 MSI for Windows and adds to LANrev</string>
+	<key>Identifier</key>
+	<string>com.github.patgmac.absolute.GoogleChrome-Win</string>
+	<key>Input</key>
+	<dict>
+		<key>NAME</key>
+		<string>GoogleChrome</string>
+	</dict>
+	<key>MinimumVersion</key>
+	<string>0.4.0</string>
+	<key>ParentRecipe</key>
+	<string>com.github.hansen-m.download.googlechrome-Win</string>
+	<key>Process</key>
+	<array>
+		<dict>
+			<key>Arguments</key>
+			<dict>
+				<key>destination_path</key>
+				<string>%RECIPE_CACHE_DIR%/%NAME%-%version%.msi</string>
+				<key>overwrite</key>
+				<string>true</string>
+				<key>source_path</key>
+				<string>%pathname%</string>
+			</dict>
+			<key>Processor</key>
+			<string>Copier</string>
+		</dict>
+		<dict>
+			<key>Arguments</key>
+			<dict>
+				<key>dest_payload_path</key>
+				<string>%RECIPE_CACHE_DIR%/%NAME%-%version%.amsdpackages</string>
+				<key>import_abman_to_servercenter</key>
+				<true/>
+				<key>os_platform</key>
+				<string>Win</string>
+				<key>sdpackages_ampkgprops_path</key>
+				<string>%RECIPE_DIR%/%NAME%-Defaults.ampkgprops</string>
+				<key>source_payload_path</key>
+				<string>%RECIPE_CACHE_DIR%/%NAME%-%version%.msi</string>
+			</dict>
+			<key>Processor</key>
+			<string>AbsoluteManageExport</string>
+		</dict>
+	</array>
+</dict>
+</plist>
