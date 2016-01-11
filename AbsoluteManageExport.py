@@ -348,9 +348,12 @@ class AbsoluteManageExport(Processor):
             if os_platform == 'Win':
                 os_platform = 4
                 self.output("[+] OSPlatform set to Windows")
-            else:
+            elif os_platform == 'Mac':
                 os_platform = 1
                 self.output("[+] OSPlatform set to Mac")
+        else:
+            os_platform = 1
+            self.output("[+] OSPlatform set to Mac")
 
         # Platform architecture setting
         if platform_arch is not None:
@@ -364,12 +367,14 @@ class AbsoluteManageExport(Processor):
                 self.output("[+] Platform Arch set to Windows any")
                 platform_arch = 196607
         else:
-            platform_arch = 131071 # Mac
-       	
-       	
-        if os_platform == 4 and platform_arch == 131071:
-            platform_arch = 196607
-       		
+            if os_platform == 4:
+                platform_arch = 196607
+            elif os_platform == 1:
+                platform_arch = 131071 # Mac
+
+        #if os_platform == 4 and platform_arch == 131071:
+         #   platform_arch = 196607
+         
        	# List of OS options to be used with min_os and max_os. This will need to be updated when new OS's come out. 
        	# Went back to WinXP, OS X 10.5 and Win2008. If you need older, file an issue.
        	# These values are available in /Applications/LANrev\ Admin/Contents/Resources/InfoItemEnumerations.plist
@@ -380,7 +385,6 @@ class AbsoluteManageExport(Processor):
         for i in xrange(1000000):
             min_choice = os_options.get(min_os)
         min_os = min_choice
-        print min_os
        	
        	# MaximumOS setting
         for i in xrange(1000000):
@@ -392,6 +396,10 @@ class AbsoluteManageExport(Processor):
             min_os = 1
         if max_os is None and os_platform == 4:
             max_os = 1
+        if min_os is None and os_platform == 1:
+            min_os = 0
+        if max_os is None and os_platform == 1:
+            max_os = 0
                 
         def add_comparison_operators():
             name_dict = dict(
