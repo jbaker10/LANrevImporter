@@ -81,6 +81,22 @@ class AbsoluteManageExport(Processor):
             'description': 'Enter the Version String that the app must be on the system in order to install. This corresponds to the "File Version String" operator',
             'required': False,
         },
+        'os_platform': {
+            'description': 'Enter the platform this is intended for. Mac or Win. Default is Mac',
+            'required': False,
+        },
+        'platform_arch': {
+            'description': 'Specify the Windows platform architecture. Choices are: x86, x64, or any. Do not specify for Mac packages',
+            'required': False,
+        },
+        'min_os': {
+            'description': 'Specify the minimum OS version. Options are: AnyWin, WinXP, Win7, Win8, Win10, Win2003, Win2008, Win2012, AnyOSX, OSX10.6, OSX10.7, OSX10.8, OSX10.9, OSX10.10, OSX10.11',
+            'required': False,
+        },
+        'max_os': {
+            'description': 'Specify the maximum OS version. Options are: AnyWin, WinXP, Win7, Win8, Win10, Win2003, Win2008, Win2012, AnyOSX, OSX10.6, OSX10.7, OSX10.8, OSX10.9, OSX10.10, OSX10.11',
+            'required': False,
+        }
 
     }
 
@@ -305,7 +321,7 @@ class AbsoluteManageExport(Processor):
     def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix,
                             payload_name_prefix, sec_to_add, import_pkg,
                             installation_condition_name,
-                            installation_condition_version_string):
+                            installation_condition_version_string, os_platform, platform_arch, min_os, max_os):
 
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
@@ -326,7 +342,57 @@ class AbsoluteManageExport(Processor):
             if ".app" not in installation_condition_name and ".pkg" not in installation_condition_name:
                 installation_condition_name = installation_condition_name + ".app"
                 self.output("[+] Appending installation condition name with '.app'")
+        
+        # OSPlatform setting. 
+        if os_platform is not None:
+            if os_platform == 'Win':
+                os_platform = 4
+                self.output("[+] OSPlatform set to Windows")
+            else:
+                os_platform = 1
+                self.output("[+] OSPlatform set to Mac")
 
+        # Platform architecture setting
+        if platform_arch is not None:
+            if platform_arch == 'x86':
+                self.output("[+] Platform Arch set to Windows X86")
+                platform_arch = 131073
+            elif platform_arch == 'x64':
+                self.output("[+] Platform Arch set to Windows x64")
+                platform_arch = 131074
+            elif platform_arch == 'any':
+                self.output("[+] Platform Arch set to Windows any")
+                platform_arch = 196607
+        else:
+            platform_arch = 131071 # Mac
+       	
+       	
+        if os_platform == 4 and platform_arch == 131071:
+            platform_arch = 196607
+       		
+       	# List of OS options to be used with min_os and max_os. This will need to be updated when new OS's come out. 
+       	# Went back to WinXP, OS X 10.5 and Win2008. If you need older, file an issue.
+       	# These values are available in /Applications/LANrev\ Admin/Contents/Resources/InfoItemEnumerations.plist
+        os_options = {'AnyWin': 1, 'WinXP': 1024, 'Win7': 16384, 'Win8': 65536, 'Win10': 131072, 'Win2008': 8192, 'Win2012': 32768, \
+        'AnyOSX': 0, 'OSX10.5': 4176, 'OSX10.6': 4192, 'OSX10.7': 4208, 'OSX10.8': 4224, 'OSX10.9': 4240, 'OSX10.10': 4256, 'OSX10.11': 4272}
+       	
+       	# MinimumOS setting
+        for i in xrange(1000000):
+            min_choice = os_options.get(min_os)
+        min_os = min_choice
+        print min_os
+       	
+       	# MaximumOS setting
+        for i in xrange(1000000):
+            max_choice = os_options.get(max_os)
+        max_os = max_choice
+        
+        # Making sure OSPlatform has something for min/max OS
+        if min_os is None and os_platform == 4:
+            min_os = 1
+        if max_os is None and os_platform == 4:
+            max_os = 1
+                
         def add_comparison_operators():
             name_dict = dict(
                 Operator="=",
@@ -400,6 +466,10 @@ class AbsoluteManageExport(Processor):
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['UniqueID'] = unique_id
         self.sdpackages_template['SDPackageList'][0]['SDPayloadList'][0]['last_modified'] = ""
         self.sdpackages_template['SDPackageList'][0]['UseSoftwareSpec'] = use_software_spec
+        self.sdpackages_template['SDPackageList'][0]['OSPlatform'] = os_platform
+        self.sdpackages_template['SDPackageList'][0]['PlatformArchitecture'] = platform_arch
+        self.sdpackages_template['SDPackageList'][0]['MinimumOS'] = min_os
+        self.sdpackages_template['SDPackageList'][0]['MaximumOS'] = max_os
         if installation_condition_version_string is not None:
             add_comparison_operators()
             self.sdpackages_template['SDPackageList'][0]['FindCriteria']['Value'][0]['Value'][1]['Value'] = installation_condition_version_string
@@ -446,13 +516,17 @@ class AbsoluteManageExport(Processor):
         import_pkg = self.env.get('import_abman_to_servercenter')
         installation_condition_name = self.env.get('installation_condition_name')
         installation_condition_version_string = self.env.get('installation_condition_version_string')
+        os_platform = self.env.get('os_platform')
+        platform_arch = self.env.get('platform_arch')
+        min_os = self.env.get('min_os')
+        max_os = self.env.get('max_os')
         try:
             sec_to_add = int(self.env.get('add_s_to_availability_date'))
         except (ValueError, TypeError):
             self.output("[+] add_s_to_availability_date is not an int. Reverting to default of 0")
             sec_to_add = 0
 
-        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg, installation_condition_name, installation_condition_version_string)
+        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os)
 
 
 if __name__ == '__main__':
