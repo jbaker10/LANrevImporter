@@ -363,7 +363,7 @@ class AbsoluteManageExport(Processor):
             subprocess.check_output([self.appleSingleTool, "encode", "-s", source_dir, "-t", dest_dir + "/Payloads/" + unique_id, "-p", "-x", "-z", "3"])
             self.output("[+] Exported [%s] to [%s]" % (source_dir, dest_dir))
         except (subprocess.CalledProcessError, OSError), err:
-            self.output("[!] Please make sure [%s] exists" % appleSingleTool)
+            self.output("[!] Please make sure [%s] exists" % self.appleSingleTool)
             raise err
 
         try:
