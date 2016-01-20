@@ -372,8 +372,12 @@ class AbsoluteManageExport(Processor):
             elif os_platform == 1:
                 platform_arch = 131071 # Mac
 
-        #if os_platform == 4 and platform_arch == 131071:
-         #   platform_arch = 196607
+        if os_platform == 4 and platform_arch == 131071:
+            platform_arch = 196607
+            
+        # Catch all in case the platform_arch is specified, but not os_platform
+        if platform_arch is not None:
+            os_platform = 4
          
        	# List of OS options to be used with min_os and max_os. This will need to be updated when new OS's come out. 
        	# Went back to WinXP, OS X 10.5 and Win2008. If you need older, file an issue.
