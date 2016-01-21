@@ -465,6 +465,9 @@ class AbsoluteManageExport(Processor):
 
         if installation_condition_name is None:
             installation_condition_name = ""
+        
+        source_dir = source_dir.strip('.msi')
+        source_dir = source_dir.strip('.exe')
 
         self.sdpackages_template['SDPackageList'][0]['Name'] = sd_name_prefix + source_dir.split("/")[-1].strip(".pkg")
         self.sdpackages_template['SDPackageList'][0]['PayloadExecutableUUID'] = unique_id
