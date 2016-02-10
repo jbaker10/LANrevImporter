@@ -102,3 +102,9 @@ Receipt written to /Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Abso
 ## Sources
 
 The `get_pref` method I borrowed from [munki](https://github.com/munki/munki)
+
+## Contributors
+Thanks to:
+* Tom Burgin
+* Jeremy Baker
+* Patrick Gallagher

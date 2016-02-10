@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2015 Thomas Burgin
+# Copyright 2016 Thomas Burgin
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -342,7 +342,10 @@ class AbsoluteManageExport(Processor):
             if ".app" not in installation_condition_name and ".pkg" not in installation_condition_name:
                 installation_condition_name = installation_condition_name + ".app"
                 self.output("[+] Appending installation condition name with '.app'")
-        
+
+        if platform_arch is not None and os_platform is None:
+            raise ProcessorError("[!] You cannot use the 'platform_arch' input variable without also defining the 'os_platform' input variable")
+
         # OSPlatform setting. 
         if os_platform is not None:
             if os_platform == 'Win':
@@ -374,10 +377,7 @@ class AbsoluteManageExport(Processor):
 
         if os_platform == 4 and platform_arch == 131071:
             platform_arch = 196607
-            
-        # Catch all in case the platform_arch is specified, but not os_platform
-        if platform_arch is not None:
-            os_platform = 4
+
          
        	# List of OS options to be used with min_os and max_os. This will need to be updated when new OS's come out. 
        	# Went back to WinXP, OS X 10.5 and Win2008. If you need older, file an issue.
