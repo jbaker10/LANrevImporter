@@ -1,16 +1,16 @@
-## AbsoluteManageExport
+## LANrevImporter
 
-AbsoluteManageExport is an AutoPkg Processor for Absolute Manage.
+LANrevImporter is an AutoPkg Processor for LANrev by HEAT.
 
-## Configure Absolute Manage
+## Configure LANrev
 
-Enable External SD Package Upload. Run this in the same user contex that you will be running Absolute Manage Admin.
+Enable External SD Package Upload. Run this in the same user contex that you will be running LANrev Admin.
 
 ```bash
 defaults write com.poleposition-sw.lanrev_admin AllowURLSDPackageImport -bool true
 ```
 
-Launch the Absolute Manage Admin Application. Sign into the correct server with a user that has rights to upload SD packages.
+Launch the LANrev Admin Application. Sign into the correct server with a user that has rights to upload SD packages.
 
 ```bash
 /Applications/LANrev Admin.app
@@ -22,12 +22,12 @@ Double check there is a folder entry for your server - username in:
 ~/Library/Application Support/LANrev Admin/Database/
 ```
 
-You should be all set to run your Absolute recipes.
+You should be all set to run your LANrev recipes.
 
 ## Installing the Processor
 
 You can install this processor locally on the system by running this installer.
-https://github.com/tburgin/AbsoluteManageExport/releases/latest
+https://github.com/jbaker10/LANrevImporter/releases/latest
 
 ## AutoPkg Shared Processor
 
@@ -35,11 +35,11 @@ As of AutoPkg 0.4.0 you can use this processor as a shared processor.
 
 Add the processor repo 
 ```bash
-autopkg repo-add https://github.com/tburgin/AbsoluteManageExport
+autopkg repo-add https://github.com/jbaker10/LANrevImporter
 ```
 Then use this as the processor in your recipes
 ```bash
-com.github.tburgin.AbsoluteManageExport/AbsoluteManageExport
+com.github.jbaker10.LANrevImporter/LANrevImporter
 ```
 
 See this wiki for more information on shared processor.
@@ -50,7 +50,7 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 ```xml
 <dict>
 		<key>Processor</key>
-		<string>com.github.tburgin.AbsoluteManageExport/AbsoluteManageExport</string>
+		<string>com.github.jbaker10.LANrevImporter/LANrevImporter</string>
 		<key>Arguments</key>
 		<dict>
 			<key>dest_payload_path</key>
@@ -65,7 +65,7 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 			<string>(OSX) </string>
 			<key>add_s_to_availability_date</key>
 			<integer>86400</integer>
-			<key>import_abman_to_servercenter</key>
+			<key>import_pkg_to_servercenter</key>
 			<true/>
 			<key>installation_condition_name</key>
 			<string>%NAME%.app</string>
@@ -77,25 +77,25 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
 ## Expected Behavior
 
-AbsoluteManageExport currently only performs a basic check to see if an executable with the same name is already in the SD Package database. If so, no upload takes place. If not, a new Software Package and Payload are created.
+LANrevImporter currently only performs a basic check to see if an executable with the same name is already in the SD Package database. If so, no upload takes place. If not, a new Software Package and Payload are created.
 
 ##### New package uploaded.
-Remember, the Absolute Manage Admin app must be open for an upload to complete.
+Remember, the LANrev Admin app must be open for an upload to complete.
 ```
-AbsoluteManageExport
-AbsoluteManageExport: [+] Exported [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.pkg] to [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.amsdpackages]
-AbsoluteManageExport: [+] Checking if [AdobeFlashPlayer-16.0.0.305] exists in SDCaches.db
-AbsoluteManageExport: [+] Attemting to upload [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.amsdpackages] to Absolute Manage Server Center
+LANrevImporter
+LANrevImporter: [+] Exported [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.pkg] to [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.amsdpackages]
+LANrevImporter: [+] Checking if [AdobeFlashPlayer-16.0.0.305] exists in SDCaches.db
+LANrevImporter: [+] Attemting to upload [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.amsdpackages] to LANrev Server Center
 Receipt written to /Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/receipts/AdobeFlashPlayer-receipt-20150223-232722.plist
 ```
 
 ##### Package Exists
 ```
-AbsoluteManageExport
-AbsoluteManageExport: [+] Exported [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.pkg] to [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.amsdpackages]
-AbsoluteManageExport: [+] Checking if [AdobeFlashPlayer-16.0.0.305] exists in SDCaches.db
-AbsoluteManageExport: [+] [AdobeFlashPlayer-16.0.0.305.pkg] already exists in Absolute Manage Server Center
-AbsoluteManageExport: [+] Nothing uploaded to Absolute Manage
+LANrevImporter
+LANrevImporter: [+] Exported [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.pkg] to [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.amsdpackages]
+LANrevImporter: [+] Checking if [AdobeFlashPlayer-16.0.0.305] exists in SDCaches.db
+LANrevImporter: [+] [AdobeFlashPlayer-16.0.0.305.pkg] already exists in LANrev Server Center
+LANrevImporter: [+] Nothing uploaded to Absolute Manage
 Receipt written to /Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/receipts/AdobeFlashPlayer-receipt-20150223-232413.plist
 ```
 
@@ -105,6 +105,7 @@ The `get_pref` method I borrowed from [munki](https://github.com/munki/munki)
 
 ## Contributors
 Thanks to:
-* Tom Burgin
+### [Tom Burgin](https://github.com/tburgin)
+* Tom is the original creator of the formerly named AbsoluteManageExport, that evolved into LANrev when the application was bought by HEAT. Thanks Tom for all the hard work that makes us look good!
 * Jeremy Baker
 * Patrick Gallagher
