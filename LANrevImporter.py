@@ -34,12 +34,12 @@ from os.path import expanduser
 from CoreFoundation import CFPreferencesCopyAppValue
 from autopkglib import Processor, ProcessorError
 
-__all__ = ["AbsoluteManageExport"]
+__all__ = ["LANrevImporter"]
 
 
-class AbsoluteManageExport(Processor):
+class LANrevImporter(Processor):
     '''Take as input a pkg or executable and a SDPackages.ampkgprops (plist config)
-       to output a .amsdpackages for use in Absolute Manage. If no
+       to output a .amsdpackages for use in LANrev. If no
        SDPackages.ampkgprops is specified a default config will be generated'''
 
     description = __doc__
@@ -54,7 +54,7 @@ class AbsoluteManageExport(Processor):
             'required': True,
         },
         'sdpackages_ampkgprops_path': {
-            'description': 'Path to a plist config for the Software Package to be used in Absolute Manage',
+            'description': 'Path to a plist config for the Software Package to be used in LANrev',
             'required': False,
         },
         'sd_name_prefix': {
@@ -65,8 +65,8 @@ class AbsoluteManageExport(Processor):
             'description': 'Define a prefix for the payload to follow naming conventions',
             'required': False,
         },
-        'import_abman_to_servercenter': {
-            'description': 'Imports autopkg .pkg result to AbMan',
+        'import_pkg_to_servercenter': {
+            'description': 'Imports autopkg .pkg result to LANrev',
             'required': False,
         },
         'add_s_to_availability_date': {
@@ -101,8 +101,8 @@ class AbsoluteManageExport(Processor):
     }
 
     output_variables = {
-            "absolute_manage_export_summary_result": {
-                "description": "Description AbsoluteManageExport Happenings"
+            "lanrev_importer_summary_result": {
+                "description": "Description LANrevImporter Happenings"
             }
     }
     appleSingleTool = "/Applications/LANrev Admin.app/Contents/MacOS/AppleSingleTool"
@@ -258,10 +258,10 @@ class AbsoluteManageExport(Processor):
 
     def set_summary_report(self, server, package, payload_id):
         # clear any pre-exising summary result
-        if 'absolute_manage_export_summary_result' in self.env:
-            del self.env['absolute_manage_export_summary_result']
+        if 'lanrev_importer_summary_result' in self.env:
+            del self.env['lanrev_importer_summary_result']
 
-        self.env["absolute_manage_export_summary_result"] = {
+        self.env["lanrev_importer_summary_result"] = {
             'summary_text': 'The following SDPackages were uploaded:',
             'report_fields': ['server', 'package', 'id'],
             'data': {
@@ -313,7 +313,7 @@ class AbsoluteManageExport(Processor):
 
         for e in sd_packages:
             if e["ExecutableName"] == exe_name:
-                self.output("[+] [%s] already exists in Absolute Manage Server Center" % exe_name)
+                self.output("[+] [%s] already exists in LANrev Server Center" % exe_name)
                 return True
 
         return False
@@ -497,7 +497,7 @@ class AbsoluteManageExport(Processor):
 
 
         if import_pkg and not self.check_sd_payload(source_dir.split("/")[-1]):
-            self.output("[+] Attempting to upload [%s] to Absolute Manage Server Center" % dest_dir)
+            self.output("[+] Attempting to upload [%s] to LANrev Server Center" % dest_dir)
             try:
                 subprocess.check_output([self.open_exe, "lanrevadmin://importsoftwarepackage?packagepath=" + dest_dir])
                 subprocess.check_output([self.open_exe, "lanrevadmin://commitsoftwarepackagechanges"])
@@ -519,7 +519,7 @@ class AbsoluteManageExport(Processor):
             except (subprocess.CalledProcessError, OSError), err:
                 raise err
         else:
-            self.output("[+] Nothing uploaded to Absolute Manage")
+            self.output("[+] Nothing uploaded to LANrev")
 
 
     def main(self):
@@ -528,7 +528,7 @@ class AbsoluteManageExport(Processor):
         sdpackages_ampkgprops = self.env.get('sdpackages_ampkgprops_path')
         sd_name_prefix = self.env.get('sd_name_prefix')
         payload_name_prefix = self.env.get('payload_name_prefix')
-        import_pkg = self.env.get('import_abman_to_servercenter')
+        import_pkg = self.env.get('import_pkg_to_servercenter')
         installation_condition_name = self.env.get('installation_condition_name')
         installation_condition_version_string = self.env.get('installation_condition_version_string')
         os_platform = self.env.get('os_platform')
@@ -545,5 +545,5 @@ class AbsoluteManageExport(Processor):
 
 
 if __name__ == '__main__':
-    processor = AbsoluteManageExport()
+    processor = LANrevImporter()
     processor.execute_shell()
