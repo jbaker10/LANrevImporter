@@ -107,5 +107,4 @@ The `get_pref` method I borrowed from [munki](https://github.com/munki/munki)
 Thanks to:
 ### [Tom Burgin](https://github.com/tburgin)
 * Tom is the original creator of the formerly named AbsoluteManageExport, that evolved into LANrev when the application was bought by HEAT. Thanks Tom for all the hard work that makes us look good!
-* [Jeremy Baker](https://github.com/jbaker10)
 * [Patrick Gallagher](https://github.com/patgmac)
