@@ -12,7 +12,7 @@ only, we separate the recipe identifier and the processor
 name with a slash:
     </string>
     <key>Identifier</key>
-    <string>com.github.tburgin.AbsoluteManageExport</string>
+    <string>com.github.jbaker10.LANrevImporter</string>
     <key>Input</key>
     <dict/>
     <key>MinimumVersion</key>
