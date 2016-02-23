@@ -80,7 +80,7 @@
 												<key>PATH_TYPE</key>
 												<integer>1</integer>
 												<key>PERMISSIONS</key>
-												<integer>420</integer>
+												<integer>493</integer>
 												<key>TYPE</key>
 												<integer>3</integer>
 												<key>UID</key>
@@ -518,7 +518,7 @@
 			<key>OVERWRITE_PERMISSIONS</key>
 			<false/>
 			<key>VERSION</key>
-			<string>0.5.0</string>
+			<string>0.5.1</string>
 		</dict>
 		<key>PROJECT_COMMENTS</key>
 		<dict>
