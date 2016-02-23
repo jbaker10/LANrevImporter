@@ -1,3 +1,8 @@
+# Notice:
+This is the new LANrevImporter processor for AutoPkg, which is a fork of the AbsoluteManageExport processor. All future enhancements and issues for this processor should be done using this repo. The old AbsoluteManageExport repo will remain available to ease the transition, but will no longer be maintained or updated.
+
+If you are switching from using the AbsoluteManageExport processor, please see [Switching from AbsoluteManageExport to LANrevImporter](https://github.com/jbaker10/LANrevImporter/wiki/Switching-from-AbsoluteManageExport-to-LANrevImporter) for help with migrating your recipes.
+
 # LANrevImporter
 
 LANrevImporter is an AutoPkg Processor for LANrev by HEAT Software.
@@ -45,6 +50,21 @@ com.github.jbaker10.LANrevImporter/LANrevImporter
 See this wiki for more information on shared processor:
 https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
+## Available Input Variables
+* `dest_payload_path`
+* `sdpackages_ampkgprops_path`
+* `source_payload_path`
+* `sd_name_prefix`
+* `payload_name_prefix`
+* `add_s_to_availability_date`
+* `import_pkg_to_servercenter`
+* `installation_condition_name`
+* `installation_condition_version_string`
+* `os_platform`
+* `platform_arch`
+* `min_os`
+* `max_os`
+
 ## Sample Processor
 
 ```xml
@@ -71,6 +91,12 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
         <string>%NAME%.app</string>
         <key>installation_condition_version_string</key>
         <string>1.0</string>
+        <key>os_platform</key>
+        <string>Mac</string>
+        <key>min_os</key>
+        <string>OSX10.7</string>
+        <key>max_os</key>
+        <string>OSX10.10</string>
     </dict>
 </dict>
 ```
