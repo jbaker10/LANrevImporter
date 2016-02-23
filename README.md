@@ -79,8 +79,10 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
 LANrevImporter currently only performs a basic check to see if an executable with the same name is already in the SD Package database. If so, no upload takes place. If not, a new Software Package and Payload are created.
 
-##### New package uploaded.
-Remember, the LANrev Admin app must be open for an upload to complete.
+### New package uploaded.
+
+_Remember, the LANrev Admin app must be open for an upload to complete._
+
 ```
 LANrevImporter
 LANrevImporter: [+] Exported [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.pkg] to [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.amsdpackages]
@@ -89,7 +91,8 @@ LANrevImporter: [+] Attemting to upload [/Users/burgintj/Library/AutoPkg/Cache/c
 Receipt written to /Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/receipts/AdobeFlashPlayer-receipt-20150223-232722.plist
 ```
 
-##### Package Exists
+### Package Exists
+
 ```
 LANrevImporter
 LANrevImporter: [+] Exported [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.pkg] to [/Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Absolute.AdobeFlashPlayer/AdobeFlashPlayer-16.0.0.305.amsdpackages]
