@@ -10,7 +10,7 @@ Enable External SD Package Upload. Run this in the same user context that you wi
 defaults write com.poleposition-sw.lanrev_admin AllowURLSDPackageImport -bool true
 ```
 
-Launch the LANrev Admin Application. Sign into the correct server with a user that has rights to upload SD packages.
+Launch the LANrev Admin application. Sign into the correct server with a user that has rights to upload SD packages.
 
 ```bash
 /Applications/LANrev Admin.app
@@ -26,23 +26,23 @@ You should be all set to run your LANrev recipes.
 
 ## Installing the Processor
 
-You can install this processor locally on the system by running this installer.
+You can install this processor locally on the system by running this installer:
 https://github.com/jbaker10/LANrevImporter/releases/latest
 
 ## AutoPkg Shared Processor
 
 As of AutoPkg 0.4.0 you can use this processor as a shared processor.
 
-Add the processor repo 
+Add the processor repo:
 ```bash
 autopkg repo-add https://github.com/jbaker10/LANrevImporter
 ```
-Then use this as the processor in your recipes
+Then use this as the processor in your recipes:
 ```bash
 com.github.jbaker10.LANrevImporter/LANrevImporter
 ```
 
-See this wiki for more information on shared processor.
+See this wiki for more information on shared processor:
 https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
 ## Sample Processor
@@ -101,9 +101,10 @@ Receipt written to /Users/burgintj/Library/AutoPkg/Cache/com.github.tburgin.Abso
 
 ## Sources
 
-The `get_pref` method I borrowed from [munki](https://github.com/munki/munki)
+The `get_pref` method I borrowed from [munki](https://github.com/munki/munki).
 
 ## Contributors
+
 Thanks to:
 ### [Tom Burgin](https://github.com/tburgin)
 * Tom is the original creator of the formerly named AbsoluteManageExport, that evolved into LANrev when the application was bought by HEAT. Thanks Tom for all the hard work that makes us look good!
