@@ -4,7 +4,7 @@ LANrevImporter is an AutoPkg Processor for LANrev by HEAT.
 
 ## Configure LANrev
 
-Enable External SD Package Upload. Run this in the same user contex that you will be running LANrev Admin.
+Enable External SD Package Upload. Run this in the same user context that you will be running LANrev Admin:
 
 ```bash
 defaults write com.poleposition-sw.lanrev_admin AllowURLSDPackageImport -bool true
