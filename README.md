@@ -49,29 +49,29 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
 ```xml
 <dict>
-		<key>Processor</key>
-		<string>com.github.jbaker10.LANrevImporter/LANrevImporter</string>
-		<key>Arguments</key>
-		<dict>
-			<key>dest_payload_path</key>
-			<string>%RECIPE_CACHE_DIR%/%NAME%-%version%.amsdpackages</string>
-			<key>sdpackages_ampkgprops_path</key>
-			<string>%RECIPE_DIR%/%NAME%-Defaults.ampkgprops</string>
-			<key>source_payload_path</key>
-			<string>%pkg_path%</string>
-			<key>sd_name_prefix</key>
-			<string>(OSX AutoPkg) </string>
-			<key>payload_name_prefix</key>
-			<string>(OSX) </string>
-			<key>add_s_to_availability_date</key>
-			<integer>86400</integer>
-			<key>import_pkg_to_servercenter</key>
-			<true/>
-			<key>installation_condition_name</key>
-			<string>%NAME%.app</string>
-			<key>installation_condition_version_string</key>
-			<string>1.0</string>
-		</dict>
+    <key>Processor</key>
+    <string>com.github.jbaker10.LANrevImporter/LANrevImporter</string>
+    <key>Arguments</key>
+    <dict>
+        <key>dest_payload_path</key>
+        <string>%RECIPE_CACHE_DIR%/%NAME%-%version%.amsdpackages</string>
+        <key>sdpackages_ampkgprops_path</key>
+        <string>%RECIPE_DIR%/%NAME%-Defaults.ampkgprops</string>
+        <key>source_payload_path</key>
+        <string>%pkg_path%</string>
+        <key>sd_name_prefix</key>
+        <string>(OSX AutoPkg) </string>
+        <key>payload_name_prefix</key>
+        <string>(OSX) </string>
+        <key>add_s_to_availability_date</key>
+        <integer>86400</integer>
+        <key>import_pkg_to_servercenter</key>
+        <true/>
+        <key>installation_condition_name</key>
+        <string>%NAME%.app</string>
+        <key>installation_condition_version_string</key>
+        <string>1.0</string>
+    </dict>
 </dict>
 ```
 
