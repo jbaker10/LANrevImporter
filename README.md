@@ -1,6 +1,6 @@
 # LANrevImporter
 
-LANrevImporter is an AutoPkg Processor for LANrev by HEAT.
+LANrevImporter is an AutoPkg Processor for LANrev by HEAT Software.
 
 ## Configure LANrev
 
