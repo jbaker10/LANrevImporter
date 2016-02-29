@@ -96,6 +96,10 @@ class LANrevImporter(Processor):
         'max_os': {
             'description': 'Specify the maximum OS version. Options are: AnyWin, WinXP, Win7, Win8, Win10, Win2003, Win2008, Win2012, AnyOSX, OSX10.6, OSX10.7, OSX10.8, OSX10.9, OSX10.10, OSX10.11',
             'required': False,
+        },
+        'executable_options': {
+            'description': 'Specify the command line options for a package. More common with Windows packages',
+            'required': False,
         }
 
     }
@@ -321,7 +325,7 @@ class LANrevImporter(Processor):
     def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix,
                             payload_name_prefix, sec_to_add, import_pkg,
                             installation_condition_name,
-                            installation_condition_version_string, os_platform, platform_arch, min_os, max_os):
+                            installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options):
 
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
@@ -485,6 +489,7 @@ class LANrevImporter(Processor):
         self.sdpackages_template['SDPackageList'][0]['PlatformArchitecture'] = platform_arch
         self.sdpackages_template['SDPackageList'][0]['MinimumOS'] = min_os
         self.sdpackages_template['SDPackageList'][0]['MaximumOS'] = max_os
+        self.sdpackages_template['SDPackageList'][0]['ExecutableOptions'] = executable_options
         if installation_condition_version_string is not None:
             add_comparison_operators()
             self.sdpackages_template['SDPackageList'][0]['FindCriteria']['Value'][0]['Value'][1]['Value'] = installation_condition_version_string
@@ -535,13 +540,14 @@ class LANrevImporter(Processor):
         platform_arch = self.env.get('platform_arch')
         min_os = self.env.get('min_os')
         max_os = self.env.get('max_os')
+        executable_options = self.env.get('executable_options')
         try:
             sec_to_add = int(self.env.get('add_s_to_availability_date'))
         except (ValueError, TypeError):
             self.output("[+] add_s_to_availability_date is not an int. Reverting to default of 0")
             sec_to_add = 0
 
-        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os)
+        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options)
 
 
 if __name__ == '__main__':
