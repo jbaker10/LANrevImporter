@@ -333,7 +333,7 @@ class LANrevImporter(Processor):
         self.output("[+] unique_id_sd [%s]" % unique_id_sd)
         use_software_spec = False
         
-        self.output("[+] ExecutableOptions set to: ", executable_options)        
+        self.output("[+] ExecutableOptions set to: %s" % executable_options)        
         if executable_options is None:
             executable_options = ""
             
