@@ -518,7 +518,7 @@ class LANrevImporter(Processor):
                     payload_check = dest_dir + "/Payloads/" + unique_id
                     if payload_check in lanrev_open_files:
                         self.output("[+] Uploading...")
-                        time.sleep(1)
+                        time.sleep(3)
                     else:
                         self.set_summary_report(self.get_pref("ServerAddress"),
                             self.sdpackages_template['SDPackageList'][0]['Name'],
