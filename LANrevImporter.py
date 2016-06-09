@@ -24,6 +24,7 @@ import os,  \
        plistlib,   \
        subprocess
 
+from datetime import timedelta
 
 from Foundation import  NSArray,     \
                         NSDictionary, \
@@ -71,6 +72,10 @@ class LANrevImporter(Processor):
         },
         'add_s_to_availability_date': {
             'description': 'Input additional number of seconds to be added to the AvailabilityDate on the default ampkgprops',
+            'required': False,
+        },
+        'availability_hour': {
+            'description': 'Input what time the package should be made available using 24-hour time format. I.e. 20 is 8PM',
             'required': False,
         },
         'installation_condition_name': {
@@ -323,7 +328,7 @@ class LANrevImporter(Processor):
         return False
 
     def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix,
-                            payload_name_prefix, sec_to_add, import_pkg,
+                            payload_name_prefix, sec_to_add, availability_hour, import_pkg,
                             installation_condition_name,
                             installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options):
 
@@ -342,6 +347,26 @@ class LANrevImporter(Processor):
 
         if payload_name_prefix is None:
             payload_name_prefix = ""
+
+        if availability_hour is not None and sec_to_add is not 0:
+            raise ProcessorError("[!] Please only use either `availability_hour` or `add_s_to_availability_date`\n Cannot use both keys at the same time.")
+        elif availability_hour is not None and sec_to_add is 0:
+            if not 0 <= int(availability_hour) <= 23:
+                if int(availability_hour) is 24:
+                    self.output("[+] availability_hour was set to 24, changing to 0")
+                    availability_hour = 0
+                else:
+                    raise ProcessorError("[!] Please enter a valid 24-hour time (i.e. between 0-23)")
+            today = datetime.date.today()
+            timestamp = time.strftime('%H')
+            utc_datetime = datetime.datetime.utcnow()
+            utc_datetime_formatted = utc_datetime.strftime("%H")
+            time_difference = ((int(utc_datetime_formatted) - int(timestamp)) * 60 * 60)
+            #availability_time = datetime.timedelta(hours=int(time_difference))
+            if int(utc_datetime_formatted) < int(availability_hour):
+                sec_to_add = int(((int(availability_hour) - int(timestamp)) * 60 * 60) + int(time_difference))
+            elif int(utc_datetime_formatted) > int(availability_hour):
+                sec_to_add = int(((24 - int(timestamp) + int(availability_hour)) * 60 * 60) + int(time_difference))
 
         if installation_condition_name is not None or installation_condition_version_string is not None:
             use_software_spec = True
@@ -500,7 +525,14 @@ class LANrevImporter(Processor):
         self.sdpackages_template['SDPackageList'][0]['FindCriteria']['Value'][0]['Value'][0]['Value'] = installation_condition_name
         ## Add defined sec to AvailabilityDate
         date = datetime.datetime.today()
-        date = date + datetime.timedelta(0, sec_to_add)
+        if availability_hour is not None:
+        	current_minute = date.strftime("%M")
+        	current_second = date.strftime("%S")
+        	date = date - timedelta(minutes=int(current_minute), seconds=int(current_second))
+        	date = date + datetime.timedelta(seconds=sec_to_add)
+        else:
+        	date = date + datetime.timedelta(seconds=sec_to_add)
+
         self.sdpackages_template['SDPackageList'][0]['AvailabilityDate'] = date
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
 
@@ -545,13 +577,14 @@ class LANrevImporter(Processor):
         min_os = self.env.get('min_os')
         max_os = self.env.get('max_os')
         executable_options = self.env.get('executable_options')
+        availability_hour = self.env.get('availability_hour')
         try:
             sec_to_add = int(self.env.get('add_s_to_availability_date'))
         except (ValueError, TypeError):
             self.output("[+] add_s_to_availability_date is not an int. Reverting to default of 0")
             sec_to_add = 0
 
-        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options)
+        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, availability_hour, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options)
 
 
 if __name__ == '__main__':
