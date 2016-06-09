@@ -351,6 +351,12 @@ class LANrevImporter(Processor):
         if availability_hour is not None and sec_to_add is not 0:
             raise ProcessorError("[!] Please only use either `availability_hour` or `add_s_to_availability_date`\n Cannot use both keys at the same time.")
         elif availability_hour is not None and sec_to_add is 0:
+            if not 0 <= int(availability_hour) <= 23:
+                if int(availability_hour) is 24:
+                    self.output("[+] availability_hour was set to 24, changing to 0")
+                    availability_hour = 0
+                else:
+                    raise ProcessorError("[!] Please enter a valid 24-hour time (i.e. between 0-23)")
             today = datetime.date.today()
             timestamp = time.strftime('%H')
             utc_datetime = datetime.datetime.utcnow()
