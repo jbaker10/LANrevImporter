@@ -73,6 +73,10 @@ class LANrevImporter(Processor):
             'description': 'Input additional number of seconds to be added to the AvailabilityDate on the default ampkgprops',
             'required': False,
         },
+        'availability_hour': {
+            'description': 'Input what time the package should be made available using 24-hour time format. I.e. 20:00 is 8:00PM',
+            'required': False,
+        },
         'installation_condition_name': {
             'description': 'Enter the Application name of the app that must be on the system in order to install. This corresponds to the "File Name" operator',
             'required': False,
@@ -323,7 +327,7 @@ class LANrevImporter(Processor):
         return False
 
     def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix,
-                            payload_name_prefix, sec_to_add, import_pkg,
+                            payload_name_prefix, sec_to_add, availability_hour, import_pkg,
                             installation_condition_name,
                             installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options):
 
@@ -342,6 +346,17 @@ class LANrevImporter(Processor):
 
         if payload_name_prefix is None:
             payload_name_prefix = ""
+
+        if availability_hour is not None and sec_to_add is 0:
+            #if availability_hour is not
+            timestamp = time.strftime('%H')
+            if int(timestamp) < int(availability_hour):
+                sec_to_add = ((int(availability_hour) - int(timestamp)) * 60 * 60)
+            elif int(timestamp) > int(availability_hour):
+                sec_to_add = ((24 - int(timestamp) + int(availability_hour)) * 60 * 60)
+        else:
+            raise ProcessorError("[!] Please only use either `availability_hour` or `add_s_to_availability_date`\n Cannot use both keys at the same time.")
+            
 
         if installation_condition_name is not None or installation_condition_version_string is not None:
             use_software_spec = True
@@ -501,6 +516,7 @@ class LANrevImporter(Processor):
         ## Add defined sec to AvailabilityDate
         date = datetime.datetime.today()
         date = date + datetime.timedelta(0, sec_to_add)
+
         self.sdpackages_template['SDPackageList'][0]['AvailabilityDate'] = date
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
 
@@ -545,13 +561,14 @@ class LANrevImporter(Processor):
         min_os = self.env.get('min_os')
         max_os = self.env.get('max_os')
         executable_options = self.env.get('executable_options')
+        availability_hour = self.env.get('availability_hour')
         try:
             sec_to_add = int(self.env.get('add_s_to_availability_date'))
         except (ValueError, TypeError):
             self.output("[+] add_s_to_availability_date is not an int. Reverting to default of 0")
             sec_to_add = 0
 
-        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options)
+        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, availability_hour, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options)
 
 
 if __name__ == '__main__':
