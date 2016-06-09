@@ -519,10 +519,13 @@ class LANrevImporter(Processor):
         self.sdpackages_template['SDPackageList'][0]['FindCriteria']['Value'][0]['Value'][0]['Value'] = installation_condition_name
         ## Add defined sec to AvailabilityDate
         date = datetime.datetime.today()
-        current_minute = date.strftime("%M")
-        current_second = date.strftime("%S")
-        date = date - timedelta(minutes=int(current_minute), seconds=int(current_second))
-        date = date + datetime.timedelta(seconds=sec_to_add)
+        if availability_hour is not None:
+        	current_minute = date.strftime("%M")
+        	current_second = date.strftime("%S")
+        	date = date - timedelta(minutes=int(current_minute), seconds=int(current_second))
+        	date = date + datetime.timedelta(seconds=sec_to_add)
+        else:
+        	date = date + datetime.timedelta(seconds=sec_to_add)
 
         self.sdpackages_template['SDPackageList'][0]['AvailabilityDate'] = date
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
