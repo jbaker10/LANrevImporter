@@ -24,6 +24,7 @@ import os,  \
        plistlib,   \
        subprocess
 
+from datetime import timedelta
 
 from Foundation import  NSArray,     \
                         NSDictionary, \
@@ -74,7 +75,7 @@ class LANrevImporter(Processor):
             'required': False,
         },
         'availability_hour': {
-            'description': 'Input what time the package should be made available using 24-hour time format. I.e. 20:00 is 8:00PM',
+            'description': 'Input what time the package should be made available using 24-hour time format. I.e. 20 is 8PM',
             'required': False,
         },
         'installation_condition_name': {
@@ -347,16 +348,19 @@ class LANrevImporter(Processor):
         if payload_name_prefix is None:
             payload_name_prefix = ""
 
-        if availability_hour is not None and sec_to_add is 0:
-            #if availability_hour is not
-            timestamp = time.strftime('%H')
-            if int(timestamp) < int(availability_hour):
-                sec_to_add = ((int(availability_hour) - int(timestamp)) * 60 * 60)
-            elif int(timestamp) > int(availability_hour):
-                sec_to_add = ((24 - int(timestamp) + int(availability_hour)) * 60 * 60)
-        else:
+        if availability_hour is not None and sec_to_add is not 0:
             raise ProcessorError("[!] Please only use either `availability_hour` or `add_s_to_availability_date`\n Cannot use both keys at the same time.")
-            
+        elif availability_hour is not None and sec_to_add is 0:
+            today = datetime.date.today()
+            timestamp = time.strftime('%H')
+            utc_datetime = datetime.datetime.utcnow()
+            utc_datetime_formatted = utc_datetime.strftime("%H")
+            time_difference = ((int(utc_datetime_formatted) - int(timestamp)) * 60 * 60)
+            #availability_time = datetime.timedelta(hours=int(time_difference))
+            if int(utc_datetime_formatted) < int(availability_hour):
+                sec_to_add = int(((int(availability_hour) - int(timestamp)) * 60 * 60) + int(time_difference))
+            elif int(utc_datetime_formatted) > int(availability_hour):
+                sec_to_add = int(((24 - int(timestamp) + int(availability_hour)) * 60 * 60) + int(time_difference))
 
         if installation_condition_name is not None or installation_condition_version_string is not None:
             use_software_spec = True
