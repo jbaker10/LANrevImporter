@@ -57,6 +57,7 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 * `sd_name_prefix`
 * `payload_name_prefix`
 * `add_s_to_availability_date`
+* `availability_hour`
 * `import_pkg_to_servercenter`
 * `installation_condition_name`
 * `installation_condition_version_string`
@@ -83,8 +84,8 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
         <string>(OSX AutoPkg) </string>
         <key>payload_name_prefix</key>
         <string>(OSX) </string>
-        <key>add_s_to_availability_date</key>
-        <integer>86400</integer>
+        <key>availability_hour</key>
+        <integer>20</integer>
         <key>import_pkg_to_servercenter</key>
         <true/>
         <key>installation_condition_name</key>
