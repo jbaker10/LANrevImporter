@@ -57,6 +57,7 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 * `sd_name_prefix`
 * `payload_name_prefix`
 * `add_s_to_availability_date`
+* `availability_hour`
 * `import_pkg_to_servercenter`
 * `installation_condition_name`
 * `installation_condition_version_string`
