@@ -51,20 +51,20 @@ See this wiki for more information on shared processor:
 https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
 ## Available Input Variables
-* `dest_payload_path`
-* `sdpackages_ampkgprops_path`
-* `source_payload_path`
-* `sd_name_prefix`
-* `payload_name_prefix`
 * `add_s_to_availability_date`
 * `availability_hour`
+* `dest_payload_path`
 * `import_pkg_to_servercenter`
 * `installation_condition_name`
 * `installation_condition_version_string`
-* `os_platform`
-* `platform_arch`
-* `min_os`
 * `max_os`
+* `min_os`
+* `os_platform`
+* `payload_name_prefix`
+* `platform_arch`
+* `sd_name_prefix`
+* `sdpackages_ampkgprops_path`
+* `source_payload_path`
 
 ## Sample Processor
 
