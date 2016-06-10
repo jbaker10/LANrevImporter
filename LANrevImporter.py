@@ -348,8 +348,8 @@ class LANrevImporter(Processor):
         if payload_name_prefix is None:
             payload_name_prefix = ""
 
-        if availability_hour is not None and sec_to_add is not 0:
-            raise ProcessorError("[!] Please only use either `availability_hour` or `add_s_to_availability_date`\n Cannot use both keys at the same time.")
+        if availability_hour is None and sec_to_add is 0:
+            pass
         elif availability_hour is not None and sec_to_add is 0:
             if not 0 <= int(availability_hour) <= 23:
                 if int(availability_hour) is 24:
@@ -367,6 +367,10 @@ class LANrevImporter(Processor):
                 sec_to_add = int(((int(availability_hour) - int(timestamp)) * 60 * 60) + int(time_difference))
             elif int(utc_datetime_formatted) > int(availability_hour):
                 sec_to_add = int(((24 - int(timestamp) + int(availability_hour)) * 60 * 60) + int(time_difference))
+        elif availability_hour is None and sec_to_add is not 0:
+            pass
+        else:
+            raise ProcessorError("[!] Please only use either `availability_hour` or `add_s_to_availability_date`\n Cannot use both keys at the same time.")
 
         if installation_condition_name is not None or installation_condition_version_string is not None:
             use_software_spec = True
@@ -412,18 +416,18 @@ class LANrevImporter(Processor):
             platform_arch = 196607
 
          
-       	# List of OS options to be used with min_os and max_os. This will need to be updated when new OS's come out. 
-       	# Went back to WinXP, OS X 10.5 and Win2008. If you need older, file an issue.
-       	# These values are available in /Applications/LANrev\ Admin/Contents/Resources/InfoItemEnumerations.plist
+        # List of OS options to be used with min_os and max_os. This will need to be updated when new OS's come out. 
+        # Went back to WinXP, OS X 10.5 and Win2008. If you need older, file an issue.
+        # These values are available in /Applications/LANrev\ Admin/Contents/Resources/InfoItemEnumerations.plist
         os_options = {'AnyWin': 1, 'WinXP': 1024, 'Win7': 16384, 'Win8': 65536, 'Win10': 131072, 'Win2008': 8192, 'Win2012': 32768, \
         'AnyOSX': 0, 'OSX10.5': 4176, 'OSX10.6': 4192, 'OSX10.7': 4208, 'OSX10.8': 4224, 'OSX10.9': 4240, 'OSX10.10': 4256, 'OSX10.11': 4272}
-       	
-       	# MinimumOS setting
+        
+        # MinimumOS setting
         for i in xrange(1000000):
             min_choice = os_options.get(min_os)
         min_os = min_choice
-       	
-       	# MaximumOS setting
+        
+        # MaximumOS setting
         for i in xrange(1000000):
             max_choice = os_options.get(max_os)
         max_os = max_choice
@@ -526,12 +530,12 @@ class LANrevImporter(Processor):
         ## Add defined sec to AvailabilityDate
         date = datetime.datetime.today()
         if availability_hour is not None:
-        	current_minute = date.strftime("%M")
-        	current_second = date.strftime("%S")
-        	date = date - timedelta(minutes=int(current_minute), seconds=int(current_second))
-        	date = date + datetime.timedelta(seconds=sec_to_add)
+          current_minute = date.strftime("%M")
+          current_second = date.strftime("%S")
+          date = date - timedelta(minutes=int(current_minute), seconds=int(current_second))
+          date = date + datetime.timedelta(seconds=sec_to_add)
         else:
-        	date = date + datetime.timedelta(seconds=sec_to_add)
+          date = date + datetime.timedelta(seconds=sec_to_add)
 
         self.sdpackages_template['SDPackageList'][0]['AvailabilityDate'] = date
         plistlib.writePlist(self.sdpackages_template, dest_dir + "/SDPackages.ampkgprops")
@@ -564,6 +568,7 @@ class LANrevImporter(Processor):
 
 
     def main(self):
+        self.output("[+] Using LANrevImporter version: 0.5.3")
         source_payload = self.env.get('source_payload_path')
         dest_payload = self.env.get('dest_payload_path')
         sdpackages_ampkgprops = self.env.get('sdpackages_ampkgprops_path')
