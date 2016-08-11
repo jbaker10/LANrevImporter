@@ -504,6 +504,13 @@
 		</dict>
 		<key>PACKAGE_SCRIPTS</key>
 		<dict>
+			<key>PREINSTALL_PATH</key>
+			<dict>
+				<key>PATH</key>
+				<string>preinstall.sh</string>
+				<key>PATH_TYPE</key>
+				<integer>1</integer>
+			</dict>
 			<key>RESOURCES</key>
 			<array/>
 		</dict>
@@ -518,7 +525,7 @@
 			<key>OVERWRITE_PERMISSIONS</key>
 			<false/>
 			<key>VERSION</key>
-			<string>0.5.1</string>
+			<string>0.5.4</string>
 		</dict>
 		<key>PROJECT_COMMENTS</key>
 		<dict>
@@ -532,7 +539,7 @@
 			ZW50LVN0eWxlLVR5cGUiIGNvbnRlbnQ9InRleHQvY3NzIj4KPHRp
 			dGxlPjwvdGl0bGU+CjxtZXRhIG5hbWU9IkdlbmVyYXRvciIgY29u
 			dGVudD0iQ29jb2EgSFRNTCBXcml0ZXIiPgo8bWV0YSBuYW1lPSJD
-			b2NvYVZlcnNpb24iIGNvbnRlbnQ9IjE0MDQuNDIiPgo8c3R5bGUg
+			b2NvYVZlcnNpb24iIGNvbnRlbnQ9IjE0MDQuNDciPgo8c3R5bGUg
 			dHlwZT0idGV4dC9jc3MiPgo8L3N0eWxlPgo8L2hlYWQ+Cjxib2R5
 			Pgo8L2JvZHk+CjwvaHRtbD4K
 			</data>
