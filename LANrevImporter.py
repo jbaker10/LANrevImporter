@@ -568,7 +568,7 @@ class LANrevImporter(Processor):
 
 
     def main(self):
-        self.output("[+] Using LANrevImporter version: 0.5.3")
+        self.output("[+] Using LANrevImporter version: 0.5.4")
         source_payload = self.env.get('source_payload_path')
         dest_payload = self.env.get('dest_payload_path')
         sdpackages_ampkgprops = self.env.get('sdpackages_ampkgprops_path')
