@@ -353,7 +353,7 @@ class LANrevImporter(Processor):
             payload_name_prefix = ""
             
         if download_payloads_before_user_dialog is None:
-            download_payloads_before_user_dialog = "False"
+            download_payloads_before_user_dialog = False
 
         if availability_hour is None and sec_to_add is 0:
             pass
