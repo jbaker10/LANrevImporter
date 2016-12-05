@@ -105,6 +105,10 @@ class LANrevImporter(Processor):
         'executable_options': {
             'description': 'Specify the command line options for a package. More common with Windows packages',
             'required': False,
+        },
+        'download_payloads_before_user_dialog': {
+            'Specify whether or not to download package payloads before or after user dialog.'
+            'required': False,   
         }
 
     }
@@ -330,7 +334,7 @@ class LANrevImporter(Processor):
     def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix,
                             payload_name_prefix, sec_to_add, availability_hour, import_pkg,
                             installation_condition_name,
-                            installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options):
+                            installation_condition_version_string, os_platform, platform_arch, min_os, max_os, download_payloads_before_user_dialog, executable_options):
 
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
@@ -347,6 +351,9 @@ class LANrevImporter(Processor):
 
         if payload_name_prefix is None:
             payload_name_prefix = ""
+            
+        if download_payloads_before_user_dialog is None:
+            download_payloads_before_user_dialog = "False"
 
         if availability_hour is None and sec_to_add is 0:
             pass
@@ -523,6 +530,7 @@ class LANrevImporter(Processor):
         self.sdpackages_template['SDPackageList'][0]['MinimumOS'] = min_os
         self.sdpackages_template['SDPackageList'][0]['MaximumOS'] = max_os
         self.sdpackages_template['SDPackageList'][0]['ExecutableOptions'] = executable_options
+        self.sdpackages_template['SDPackageList'][0]['DownloadPackagesBeforeShowingToUser'] = download_payloads_before_user_dialog
         if installation_condition_version_string is not None:
             add_comparison_operators()
             self.sdpackages_template['SDPackageList'][0]['FindCriteria']['Value'][0]['Value'][1]['Value'] = installation_condition_version_string
@@ -582,6 +590,7 @@ class LANrevImporter(Processor):
         min_os = self.env.get('min_os')
         max_os = self.env.get('max_os')
         executable_options = self.env.get('executable_options')
+        download_payloads_before_user_dialog = self.env.get('download_payloads_before_user_dialog')
         availability_hour = self.env.get('availability_hour')
         try:
             sec_to_add = int(self.env.get('add_s_to_availability_date'))
@@ -589,7 +598,7 @@ class LANrevImporter(Processor):
             self.output("[+] add_s_to_availability_date is not an int. Reverting to default of 0")
             sec_to_add = 0
 
-        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, availability_hour, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options)
+        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, availability_hour, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options, download_payloads_before_user_dialog )
 
 
 if __name__ == '__main__':
