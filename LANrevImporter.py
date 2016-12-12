@@ -107,7 +107,7 @@ class LANrevImporter(Processor):
             'required': False,
         },
         'download_payloads_before_user_dialog': {
-            'Specify whether or not to download package payloads before or after user dialog.'
+            'Specify whether or not to download package payloads before or after user dialog.',
             'required': False,   
         }
 
