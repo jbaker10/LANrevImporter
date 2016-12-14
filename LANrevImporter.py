@@ -334,7 +334,7 @@ class LANrevImporter(Processor):
     def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix,
                             payload_name_prefix, sec_to_add, availability_hour, import_pkg,
                             installation_condition_name,
-                            installation_condition_version_string, os_platform, platform_arch, min_os, max_os, download_payloads_before_user_dialog, executable_options):
+                            installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options, download_payloads_before_user_dialog):
 
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
