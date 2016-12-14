@@ -54,6 +54,7 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 * `add_s_to_availability_date`
 * `availability_hour`
 * `dest_payload_path`
+* `download_payloads_before_user_dialog`
 * `import_pkg_to_servercenter`
 * `installation_condition_name`
 * `installation_condition_version_string`
@@ -65,6 +66,7 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 * `sd_name_prefix`
 * `sdpackages_ampkgprops_path`
 * `source_payload_path`
+* `staging_server_option`
 
 ## Sample Processor
 
@@ -98,6 +100,10 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
         <string>OSX10.7</string>
         <key>max_os</key>
         <string>OSX10.10</string>
+        <key>download_payloads_before_user_dialog</key>
+        <true/>
+        <key>staging_server_option</key>
+        <integer>2</integer>
     </dict>
 </dict>
 ```
