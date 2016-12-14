@@ -54,6 +54,7 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 * `add_s_to_availability_date`
 * `availability_hour`
 * `dest_payload_path`
+* `download_payloads_before_user_dialog`
 * `import_pkg_to_servercenter`
 * `installation_condition_name`
 * `installation_condition_version_string`
@@ -98,6 +99,8 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
         <string>OSX10.7</string>
         <key>max_os</key>
         <string>OSX10.10</string>
+        <key>download_payloads_before_user_dialog</key>
+        <true/>
     </dict>
 </dict>
 ```
