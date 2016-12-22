@@ -358,19 +358,22 @@ class LANrevImporter(Processor):
             
         if download_payloads_before_user_dialog is None:
             download_payloads_before_user_dialog = False
+            self.output("[+] download_payloads_before_user_dialog set to %s" % download_payloads_before_user_dialog)
             
         if staging_server_option is None:
             staging_server_option = 1
-            
+            self.output("[+] staging_server_option set to 'Any'")
         elif staging_server_option == 2:
             staging_server_option = 2
-            
+            self.output("[+] staging_server_option set to 'From assigned distribution point if available'")
         elif staging_server_option == 3:
             staging_server_option = 3
-            
+            self.output("[+] staging_server_option set to 'From assigned distribution point only'")
         else:
             staging_server_option = 1
+            self.output("[+] staging_server_option set to 'Any'")
 
+       
         if availability_hour is None and sec_to_add is 0:
             pass
         elif availability_hour is not None and sec_to_add is 0:
