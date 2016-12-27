@@ -107,7 +107,11 @@ class LANrevImporter(Processor):
             'required': False,
         },
         'download_payloads_before_user_dialog': {
-            'description': 'Specify whether or not to download package payloads before or after user dialog.',
+            'description': 'Specify whether or not to download package payloads before or after user dialog',
+            'required': False,   
+        },
+        'staging_server_option': {
+            'description': 'Define which distribution point software should be downloaded from. Choices are: 1 for Any, 2 for From assigned distribution point if available or 3 for From assigned distribution point only',
             'required': False,   
         }
 
@@ -334,7 +338,7 @@ class LANrevImporter(Processor):
     def export_amsdpackages(self, source_dir, dest_dir, am_options, sd_name_prefix,
                             payload_name_prefix, sec_to_add, availability_hour, import_pkg,
                             installation_condition_name,
-                            installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options, download_payloads_before_user_dialog):
+                            installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options, download_payloads_before_user_dialog, staging_server_option):
 
         unique_id = str(uuid.uuid4()).upper()
         unique_id_sd = str(uuid.uuid4()).upper()
@@ -354,7 +358,22 @@ class LANrevImporter(Processor):
             
         if download_payloads_before_user_dialog is None:
             download_payloads_before_user_dialog = False
+            self.output("[+] download_payloads_before_user_dialog set to %s" % download_payloads_before_user_dialog)
+            
+        if staging_server_option is None:
+            staging_server_option = 1
+            self.output("[+] staging_server_option set to 'Any'")
+        elif staging_server_option == 2:
+            staging_server_option = 2
+            self.output("[+] staging_server_option set to 'From assigned distribution point if available'")
+        elif staging_server_option == 3:
+            staging_server_option = 3
+            self.output("[+] staging_server_option set to 'From assigned distribution point only'")
+        else:
+            staging_server_option = 1
+            self.output("[+] staging_server_option set to 'Any'")
 
+       
         if availability_hour is None and sec_to_add is 0:
             pass
         elif availability_hour is not None and sec_to_add is 0:
@@ -364,6 +383,7 @@ class LANrevImporter(Processor):
                     availability_hour = 0
                 else:
                     raise ProcessorError("[!] Please enter a valid 24-hour time (i.e. between 0-23)")
+                    
             today = datetime.date.today()
             timestamp = time.strftime('%H')
             utc_datetime = datetime.datetime.utcnow()
@@ -531,6 +551,7 @@ class LANrevImporter(Processor):
         self.sdpackages_template['SDPackageList'][0]['MaximumOS'] = max_os
         self.sdpackages_template['SDPackageList'][0]['ExecutableOptions'] = executable_options
         self.sdpackages_template['SDPackageList'][0]['DownloadPackagesBeforeShowingToUser'] = download_payloads_before_user_dialog
+        self.sdpackages_template['SDPackageList'][0]['StagingServerOption'] = staging_server_option
         if installation_condition_version_string is not None:
             add_comparison_operators()
             self.sdpackages_template['SDPackageList'][0]['FindCriteria']['Value'][0]['Value'][1]['Value'] = installation_condition_version_string
@@ -591,6 +612,7 @@ class LANrevImporter(Processor):
         max_os = self.env.get('max_os')
         executable_options = self.env.get('executable_options')
         download_payloads_before_user_dialog = self.env.get('download_payloads_before_user_dialog')
+        staging_server_option = self.env.get('staging_server_option')
         availability_hour = self.env.get('availability_hour')
         try:
             sec_to_add = int(self.env.get('add_s_to_availability_date'))
@@ -598,7 +620,7 @@ class LANrevImporter(Processor):
             self.output("[+] add_s_to_availability_date is not an int. Reverting to default of 0")
             sec_to_add = 0
 
-        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, availability_hour, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options, download_payloads_before_user_dialog )
+        self.export_amsdpackages(source_payload, dest_payload, sdpackages_ampkgprops, sd_name_prefix, payload_name_prefix, sec_to_add, availability_hour, import_pkg, installation_condition_name, installation_condition_version_string, os_platform, platform_arch, min_os, max_os, executable_options, download_payloads_before_user_dialog, staging_server_option )
 
 
 if __name__ == '__main__':

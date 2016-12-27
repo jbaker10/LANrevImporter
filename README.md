@@ -66,6 +66,7 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
 * `sd_name_prefix`
 * `sdpackages_ampkgprops_path`
 * `source_payload_path`
+* `staging_server_option`
 
 ## Sample Processor
 
@@ -101,6 +102,8 @@ https://github.com/autopkg/autopkg/wiki/Processor-Locations
         <string>OSX10.10</string>
         <key>download_payloads_before_user_dialog</key>
         <true/>
+        <key>staging_server_option</key>
+        <integer>2</integer>
     </dict>
 </dict>
 ```
