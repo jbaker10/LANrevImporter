@@ -51,22 +51,22 @@ See this wiki for more information on shared processor:
 https://github.com/autopkg/autopkg/wiki/Processor-Locations
 
 ## Available Input Variables
-* `add_s_to_availability_date`
-* `availability_hour`
-* `dest_payload_path`
-* `download_payloads_before_user_dialog`
-* `import_pkg_to_servercenter`
-* `installation_condition_name`
-* `installation_condition_version_string`
-* `max_os`
-* `min_os`
-* `os_platform`
-* `payload_name_prefix`
-* `platform_arch`
-* `sd_name_prefix`
-* `sdpackages_ampkgprops_path`
-* `source_payload_path`
-* `staging_server_option`
+* [`add_s_to_availability_date`](https://github.com/jbaker10/LANrevImporter/wiki/add_s_to_availability_date)
+* [`availability_hour`](https://github.com/jbaker10/LANrevImporter/wiki/availability_hour)
+* [`dest_payload_path`](https://github.com/jbaker10/LANrevImporter/wiki/dest_payload_path)
+* [`download_payloads_before_user_dialog`](https://github.com/jbaker10/LANrevImporter/wiki/download_payloads_before_user_dialog)
+* [`import_pkg_to_servercenter`](https://github.com/jbaker10/LANrevImporter/wiki/import_pkg_to_servercenter)
+* [`installation_condition_name`](https://github.com/jbaker10/LANrevImporter/wiki/installation_condition_name)
+* [`installation_condition_version_string`](https://github.com/jbaker10/LANrevImporter/wiki/installation_condition_version_string)
+* [`max_os`](https://github.com/jbaker10/LANrevImporter/wiki/max_os)
+* [`min_os`](https://github.com/jbaker10/LANrevImporter/wiki/min_os)
+* [`os_platform`](https://github.com/jbaker10/LANrevImporter/wiki/os_platform)
+* [`payload_name_prefix`](https://github.com/jbaker10/LANrevImporter/wiki/payload_name_prefix)
+* [`platform_arch`](https://github.com/jbaker10/LANrevImporter/wiki/platform_arch)
+* [`sd_name_prefix`](https://github.com/jbaker10/LANrevImporter/wiki/sd_name_prefix)
+* [`sdpackages_ampkgprops_path`](https://github.com/jbaker10/LANrevImporter/wiki/sdpackages_ampkgprops_path)
+* [`source_payload_path`](https://github.com/jbaker10/LANrevImporter/wiki/source_payload_path)
+* [`staging_server_option`](https://github.com/jbaker10/LANrevImporter/wiki/staging_server_option)
 
 ## Sample Processor
 
