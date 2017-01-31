@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2016 Thomas Burgin
+# Copyright 2017 Jeremiah Baker
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -597,7 +597,7 @@ class LANrevImporter(Processor):
 
 
     def main(self):
-        self.output("[+] Using LANrevImporter version: 0.5.4")
+        self.output("[+] Using LANrevImporter version: 0.5.5")
         source_payload = self.env.get('source_payload_path')
         dest_payload = self.env.get('dest_payload_path')
         sdpackages_ampkgprops = self.env.get('sdpackages_ampkgprops_path')
