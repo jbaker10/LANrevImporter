@@ -146,7 +146,7 @@ Thanks to:
 * Tom is the original creator of the formerly named AbsoluteManageExport, that evolved into LANrevImporter when the application was bought by HEAT. Thanks Tom for all the hard work that makes us look good!
 * [Patrick Gallagher](https://github.com/patgmac)
 
-##License
+## License
 
 Copyright 2017 Jeremiah Baker.
 
