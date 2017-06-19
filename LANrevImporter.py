@@ -575,16 +575,23 @@ class LANrevImporter(Processor):
             try:
                 subprocess.check_output([self.open_exe, "lanrevadmin://importsoftwarepackage?packagepath=" + dest_dir])
                 subprocess.check_output([self.open_exe, "lanrevadmin://commitsoftwarepackagechanges"])
-                self.output("[+] Uploading...")
-                time.sleep(5)
                 lanrev_pid = subprocess.check_output(["/usr/bin/pgrep", "LANrev Admin"]).strip("\n")
+                payload_check = dest_dir + "/Payloads/" + unique_id
                 while True:
                     lanrev_open_files = subprocess.check_output(["/usr/sbin/lsof", "-p", lanrev_pid])
-                    payload_check = dest_dir + "/Payloads/" + unique_id
+                    if payload_check not in lanrev_open_files:
+                        self.output("[+] Waiting to begin package upload..")
+                        time.sleep(1)
+                    else:
+                        self.output("[+] Package upload has begun...")
+                        break
+                while True:
+                    lanrev_open_files = subprocess.check_output(["/usr/sbin/lsof", "-p", lanrev_pid])
                     if payload_check in lanrev_open_files:
                         self.output("[+] Uploading...")
-                        time.sleep(3)
+                        time.sleep(1)
                     else:
+                        self.output("[+] Package uploaded successfully...")
                         self.set_summary_report(self.get_pref("ServerAddress"),
                             self.sdpackages_template['SDPackageList'][0]['Name'],
                             unique_id)
@@ -597,7 +604,7 @@ class LANrevImporter(Processor):
 
 
     def main(self):
-        self.output("[+] Using LANrevImporter version: 0.5.5")
+        self.output("[+] Using LANrevImporter version: 0.5.6")
         source_payload = self.env.get('source_payload_path')
         dest_payload = self.env.get('dest_payload_path')
         sdpackages_ampkgprops = self.env.get('sdpackages_ampkgprops_path')
