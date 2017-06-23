@@ -273,18 +273,16 @@ class LANrevImporter(Processor):
         return md5.hexdigest()
     
 
-    def set_summary_report(self, server, package, payload_id):
+    def set_summary_report(self, package):
         # clear any pre-exising summary result
         if 'lanrev_importer_summary_result' in self.env:
             del self.env['lanrev_importer_summary_result']
 
         self.env["lanrev_importer_summary_result"] = {
             'summary_text': 'The following SDPackages were uploaded:',
-            'report_fields': ['server', 'package', 'id'],
+            'report_fields': ['Package'],
             'data': {
-                'server': server,
-                'package': package,
-                'id': payload_id
+                'Package': package
             }
         }
 
@@ -592,9 +590,7 @@ class LANrevImporter(Processor):
                         time.sleep(1)
                     else:
                         self.output("[+] Package uploaded successfully...")
-                        self.set_summary_report(self.get_pref("ServerAddress"),
-                            self.sdpackages_template['SDPackageList'][0]['Name'],
-                            unique_id)
+                        self.set_summary_report(self.sdpackages_template['SDPackageList'][0]['Name'])
                         break
     
             except (subprocess.CalledProcessError, OSError), err:
