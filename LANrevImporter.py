@@ -575,11 +575,13 @@ class LANrevImporter(Processor):
                 subprocess.check_output([self.open_exe, "lanrevadmin://commitsoftwarepackagechanges"])
                 lanrev_pid = subprocess.check_output(["/usr/bin/pgrep", "LANrev Admin"]).strip("\n")
                 payload_check = dest_dir + "/Payloads/" + unique_id
-                while True:
+                i = 0
+                while i < 30:
                     lanrev_open_files = subprocess.check_output(["/usr/sbin/lsof", "-p", lanrev_pid])
                     if payload_check not in lanrev_open_files:
                         self.output("[+] Waiting to begin package upload..")
                         time.sleep(1)
+                        i = i+1
                     else:
                         self.output("[+] Package upload has begun...")
                         break
@@ -587,7 +589,7 @@ class LANrevImporter(Processor):
                     lanrev_open_files = subprocess.check_output(["/usr/sbin/lsof", "-p", lanrev_pid])
                     if payload_check in lanrev_open_files:
                         self.output("[+] Uploading...")
-                        time.sleep(1)
+                        time.sleep(3)
                     else:
                         self.output("[+] Package uploaded successfully...")
                         self.set_summary_report(self.sdpackages_template['SDPackageList'][0]['Name'])
